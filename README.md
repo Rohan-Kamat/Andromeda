@@ -17,3 +17,4 @@ Building a search engine from scratch. We plan on implementing the 3 major compo
 - [NextJS Playlist](https://youtube.com/playlist?list=PL4cUxeGkcC9g9gP2onazU5-2M-AzA8eBw)
 - [pyCLI](https://pythonhosted.org/pyCLI/#:~:text=The%20cli%20package%20is%20a,profiling%20to%20your%20CLI%20apps.)
 - [Flask-RESTful](https://flask-restful.readthedocs.io/en/latest/)
+- [Crawler Tutorials](https://youtube.com/playlist?list=PL6gx4Cwl9DGA8Vys-f48mAH9OKSUyav0q)
