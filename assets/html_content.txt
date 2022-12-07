@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="Pallets" property="og:site_name"/>
+<meta content="https://palletsprojects.com/p/click/" property="og:url"/>
+<meta content="Click" property="og:title"/>
+<meta content="website" property="og:type"/>
+<meta content="https://palletsprojects.com/og_image.png" property="og:image"/>
+<meta content="400" property="og:image:width"/>
+<meta content="400" property="og:image:height"/>
+<meta content="image/png" property="og:image:type"/>
+<meta content="logo" property="og:image:alt"/>
+<link href="/favicon.png" rel="shortcut icon"/>
+<link href="/static/main.css?h=7ca1ad1b" rel="stylesheet"/>
+<link href="/static/pygments.css" rel="stylesheet"/>
+<script src="/static/main.js?h=62f162ad" type="text/javascript"></script>
+<title>Click | The Pallets Projects</title>
+<body class="default">
+<nav class="navbar navbar-inverse navbar-static-top">
+<div class="container">
+<div class="navbar-header">
+<button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#navbar" data-toggle="collapse" type="button">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<a class="navbar-brand" href="/">The Pallets Projects</a>
+</div>
+<div class="collapse navbar-collapse" id="navbar">
+<ul class="nav navbar-nav">
+<li class="active">
+<a href="/p/">Projects</a>
+</li>
+<li>
+<a href="/governance/">Governance</a>
+</li>
+<li>
+<a href="/people/">People</a>
+</li>
+<li>
+<a href="/blog/">Blog</a>
+</li>
+<li>
+<a href="/donate"><strong>Donate</strong></a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<div class="body-wrapper">
+<div class="container">
+<ul class="project-selector">
+<li><a href="/p/">Overview</a>
+<li class="active"><a href="/p/click/">Click</a>
+<li><a href="/p/flask/">Flask</a>
+<li><a href="/p/itsdangerous/">ItsDangerous</a>
+<li><a href="/p/jinja/">Jinja</a>
+<li><a href="/p/markupsafe/">MarkupSafe</a>
+<li><a href="/p/quart/">Quart</a>
+<li><a href="/p/werkzeug/">Werkzeug</a>
+</li></li></li></li></li></li></li></li></ul>
+<div class="row">
+<div class="col-sm-9">
+<h1>Click</h1>
+</div>
+<div class="col-sm-3">
+<div class="github-button">
+<a aria-label="Star pallets/click on GitHub" class="github-button" data-show-count="true" data-size="large" href="https://github.com/pallets/click">Star</a>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-9">
+<p>Click is a Python package for creating beautiful command line interfaces
+in a composable way with as little code as necessary. It's the "Command
+Line Interface Creation Kit". It's highly configurable but comes with
+sensible defaults out of the box.</p>
+<p>It aims to make the process of writing command line tools quick and fun
+while also preventing any frustration caused by the inability to
+implement an intended CLI API.</p>
+<p>Click in three points:</p>
+<ul>
+<li>Arbitrary nesting of commands</li>
+<li>Automatic help page generation</li>
+<li>Supports lazy loading of subcommands at runtime</li>
+</ul>
+<div class="hll"><pre><span></span><span class="kn">import</span> <span class="nn">click</span>
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"--count"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Number of greetings."</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"--name"</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="s2">"Your name"</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s2">"The person to greet."</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">"""Simple program that greets NAME for a total of COUNT times."""</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">"Hello, </span><span class="si">%s</span><span class="s2">!"</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">hello</span><span class="p">()</span>
+</pre></div>
+<div class="hll"><pre><span></span>$ python hello.py --count=3
+Your name: Click
+Hello, Click!
+Hello, Click!
+Hello, Click!
+</pre></div>
+</div>
+<div class="col-sm-3">
+<div class="infobox">
+<p><span class="fa fa-fw fa-github"></span>
+<a href="https://github.com/pallets/click">pallets/click</a>
+<p><span class="fa fa-fw fa-list"></span> <a href="https://pypi.python.org/pypi/click">Releases on PyPI</a>
+<p><span class="fa fa-fw fa-cogs"></span> <a href="https://dev.azure.com/pallets/click/_build">Test status</a>
+<p><span class="fa fa-fw fa-book"></span> <a href="https://click.palletsprojects.com/">Documentation</a>
+</p></p></p></p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bottomsummary">
+<div class="container">
+</div>
+</div>
+<footer>
+<div class="container">
+<div class="row">
+<div class="col-sm-3 icon-bar">
+<a href="https://github.com/pallets/" title="Pallets on GitHub"><i class="fa fa-github"></i></a>
+<a href="https://twitter.com/PalletsTeam/" title="Pallets on Twitter"><i class="fa fa-twitter"></i></a>
+<a href="https://discord.gg/pallets/" title="Chat on Discord"><i class="fa fa-comment"></i></a>
+<a href="https://github.com/pallets/website/tree/master/content/projects/click/contents.lr" title="View source for this page"><i class="fa fa-code"></i></a>
+</div>
+<div class="col-sm-9">
+<a href="/license/">License &amp; Copyright</a> •
+          <a href="/contact/">Contact</a> •
+          Made with <i class="fa fa-fw fa-heart" title="Heart"><span hidden="">Heart</span></i>
+          and <a href="https://www.getlektor.com/">Lektor</a> •
+          Powered by <a href="https://www.netlify.com/">Netlify</a>
+</div>
+</div>
+</div>
+</footer>
+<script async="" defer="" id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+</body>
