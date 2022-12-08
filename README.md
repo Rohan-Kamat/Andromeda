@@ -1,32 +1,36 @@
 # Andromeda
 Building a search engine from scratch. We plan on implementing the 3 major components in a search engine - `Crawler`, `Parser` and `Indexing`. We will begin by developing command line tools for these components and then wrapping these with an API service to be used by a frontend. This project is being done under IEEE-NITK.
 
-## Setup
+## Dev Server
 ### VPN Connection
 To establish a VPN connection to NITK-NET:
-- Login at the Sophos portal - [link](vpnportal.nitk.ac.in).
-- Download SSL-VPN config file for the necessary OS.
-- Execute `sudo openvpn <path-to-config-file>` to initiate the connection sequence. Keep this terminal open.
+1. Login at the Sophos portal - [link](vpnportal.nitk.ac.in).
+2. Download SSL-VPN config file for the necessary OS.
+3. Execute `sudo openvpn <path-to-config-file>` to initiate the connection sequence. Keep this terminal open.
 
 ### SSH
-- Execute `ssh <user>@<container-ip>` and then enter necessary details on being prompted.
+1. Execute `ssh <user>@<container-ip>` and then enter necessary details on being prompted.
+
+## Getting Started
+### Setup
+1. Install `Docker Engine` by following this [link](https://docs.docker.com/engine/install/ubuntu/).
+2. Touch a file - `src/.env`. 
+    ```.env
+    MONGO_USER=admin
+    MONGO_PASSWORD=adminpw
+    ```
+3. Create a virtual environment and then install all the dependencies in `src/requirements.txt` after activating the environment.
+
+### Running
+1. Activate the virtual environment.
+2. Execute `docker-compose up -d` to bring up the `MongoDB` server.
+
+> **Note** <br />
+> In the Docker network, the MongoDB server will be running at port - `27017` and a service known as Mongo-Express will be running at port - `8081` which provides a GUI to access the database.
 
 ## Guidelines
 - Please follow the [pep8](https://peps.python.org/pep-0008/) python style guide
 - Refer to this [link](https://cbea.ms/git-commit/) to write proper commit messages
-
-## Parser
-### Uploading html content  
-- Run the content_writer.py file inside the src folder.  
-- Change the url variable if you wish to parse a different webpage.  
-- This content will later be uploaded from the database.  
-### Parsing the html content  
-- Navigate inside the /src/cli_scripts folder.  
-- Give the following commands  
-    > pip install --editable .  
-    > parse <absolute path of the /assets/html_content.txt file>
-- The links and words will be separated and stored in /assets/links.txt and /assets/words.txt respectively
-- Later on this will be stored in the database
 
 ## Intended Tech Stack
 - Python
