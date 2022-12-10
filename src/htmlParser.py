@@ -1,8 +1,10 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-import nltk
-from nltk.corpus import stopwords
+from sklearn.feature_extraction.text import CountVectorizer
+import pandas as pd
+
+
 
 # Function to separate the links and text from the rest of the html
 class htmlParser:
@@ -10,7 +12,7 @@ class htmlParser:
         self.content = html_content
         self.soup = BeautifulSoup(self.content,'html.parser')
         self.links = []
-        self.words = []
+        self.word_freq = None
     
 
     def getLinks(self):
@@ -20,26 +22,20 @@ class htmlParser:
         return self.links
         
     
-    # Function to remove stopwords
-    def removeStopWords(self,text):
-        stop_words = set(stopwords.words('english'))
-        stop_words.update(['\n','\t'])
-
-        words = text.split()
-
-        filtered_sentence = []
-        for w in words:
-            if w.lower() not in stop_words:
-                filtered_sentence.append(w)
-
-        return filtered_sentence
 
     
-    def getWords(self):
+    def getWordFrequency(self):
         text = self.soup.get_text()
-        self.words = self.removeStopWords(text)
 
-        return self.words
+        cv = CountVectorizer(stop_words='english') 
+        cv_matrix = cv.fit_transform([text]) 
+        # create document term matrix
+        self.word_freq = pd.DataFrame(cv_matrix.toarray(), columns=cv.get_feature_names_out())
+
+        return self.word_freq
+
+
+
 
         
 
