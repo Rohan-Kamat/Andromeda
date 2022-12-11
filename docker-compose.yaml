@@ -24,6 +24,11 @@ services:
       - ME_CONFIG_MONGODB_SERVER=mongodb
     restart: always
 
+  andromeda:
+    image: andromeda:1.0
+    container_name: andromeda
+    entrypoint: python3 /home/src/crawler.py start
+
 networks:
   default:
     name: mongo-express-network
