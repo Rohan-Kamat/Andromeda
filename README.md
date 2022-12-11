@@ -13,13 +13,33 @@ To establish a VPN connection to NITK-NET:
 
 ## Getting Started
 ### Setup
+#### Docker
 1. Install `Docker Engine` by following this [link](https://docs.docker.com/engine/install/ubuntu/).
-2. Touch a file - `src/.env`. 
+
+#### Chromedriver
+```bash
+# Install Chrome
+RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add \
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get -y update \
+    && apt-get -y install google-chrome-stable
+
+# Install chromedriver
+RUN wget -N https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_linux64.zip -P ~/ \
+    && unzip ~/chromedriver_linux64.zip -d ~/ \
+    && rm ~/chromedriver_linux64.zip \
+    && mv -f ~/chromedriver /usr/local/bin/chromedriver \
+```
+> **Warning** <br />
+> Take care to use `compatible` versions for `google-chrome` and `chromedriver`. Refer [this](https://stackoverflow.com/a/55266105/15333904) answer on StackOverflow.
+
+#### Env
+1. Touch a file - `src/.env`. 
     ```.env
     MONGO_USER=admin
     MONGO_PASSWORD=adminpw
     ```
-3. Create a virtual environment and then install all the dependencies in `src/requirements.txt` after activating the environment.
+2. Create a virtual environment and then install all the dependencies in `src/requirements.txt` after activating the environment.
 
 ### Running
 1. Activate the virtual environment.
@@ -35,13 +55,11 @@ To establish a VPN connection to NITK-NET:
 ## Intended Tech Stack
 - Python
 - NextJS
-- pyCLI
-- Flask-RESTful
+    - [Tutorial](https://youtube.com/playlist?list=PL4cUxeGkcC9g9gP2onazU5-2M-AzA8eBw)
+- [click](https://click.palletsprojects.com/en/8.1.x/)
+- [Flask-RESTful](https://flask-restful.readthedocs.io/en/latest/)
 
 ## References
 - [Text Retrieval](https://www.coursera.org/learn/text-retrieval/home/info)
 - [Can I Make A Search Engine From Scratch](https://www.youtube.com/watch?v=Mwa4aphsJGI)
-- [NextJS Playlist](https://youtube.com/playlist?list=PL4cUxeGkcC9g9gP2onazU5-2M-AzA8eBw)
-- [pyCLI](https://pythonhosted.org/pyCLI/#:~:text=The%20cli%20package%20is%20a,profiling%20to%20your%20CLI%20apps.)
-- [Flask-RESTful](https://flask-restful.readthedocs.io/en/latest/)
 - [Crawler Tutorials](https://youtube.com/playlist?list=PL6gx4Cwl9DGA8Vys-f48mAH9OKSUyav0q)
