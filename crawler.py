@@ -15,21 +15,24 @@ def cli():
 # Ex command to run this function
 #  python3 crawler.py crawler <URL>
 @click.command()
-@click.argument("url" , help = "The URL to start the crawler") 
+@click.argument("url", help="The URL to start the crawler")
 def crawler(url):
     print("Starting the crawler")
     print(url)
     options = Options()
     # Enabling the headless header will make the crawler run in background
     options.headless = True
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver = webdriver.Chrome(
+        service=Service(
+            ChromeDriverManager().install()),
+        options=options)
 
     # Crawling throught the site
     driver.get(url)
 
     # Finding all the elements by Tag name = a
     elements = driver.find_elements(By.TAG_NAME, "a")
-    
+
     print(f"There are {len(elements)} links on this page")
 
     for a in elements:
@@ -41,6 +44,7 @@ def crawler(url):
 @click.command()
 def test():
     print("This is a test function")
+
 
 cli.add_command(crawler)
 cli.add_command(test)
