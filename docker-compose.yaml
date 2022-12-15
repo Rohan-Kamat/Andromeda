@@ -10,6 +10,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
     volumes:
       - mongodb-data:/data/db
 
@@ -23,11 +24,15 @@ services:
       - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_PASSWORD}
       - ME_CONFIG_MONGODB_SERVER=mongodb
     restart: always
+    depends_on:
+      - mongodb
 
   andromeda:
     image: andromeda:1.0
     container_name: andromeda
     entrypoint: python3 /home/src/crawler.py start
+    depends_on:
+      - mongo-express
 
 networks:
   default:

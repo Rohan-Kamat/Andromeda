@@ -12,9 +12,11 @@ class Indexer:
         db='test',
     ):
         try:
+            print("Initializing DB connection...")
             self.client = pymongo.MongoClient(f'mongodb://{user}:{passwd}@{host}:{port}')
             self.db = self.client[db]
             self.websites = self.db['websites']
+            print("DB connection established!")
         except Exception as error:
             raise ConnectionAbortedError(error)
 
