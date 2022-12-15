@@ -27,12 +27,14 @@ services:
     depends_on:
       - mongodb
 
-  andromeda:
-    image: andromeda:1.0
-    container_name: andromeda
-    entrypoint: python3 /home/src/crawler.py start
-    depends_on:
-      - mongo-express
+  # andromeda:
+  #   image: andromeda:1.0
+  #   container_name: andromeda
+  #   entrypoint: python3 /home/src/crawler.py start
+  #   depends_on:
+  #     - mongo-express
+  #   environment:
+  #     - MONGODB_HOST=mongodb
 
 networks:
   default:

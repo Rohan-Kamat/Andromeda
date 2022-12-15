@@ -1,16 +1,18 @@
 import pymongo
 from bson.json_util import dumps
 import json
+import os
 
 class Indexer:
     def __init__(
         self,
         user='admin',
         passwd='adminpw',
-        host='localhost',
+        host=os.environ.get('MONGODB_HOST') or 'localhost',
         port=27017,
         db='test',
     ):
+        print(host)
         try:
             print("Initializing DB connection...")
             self.client = pymongo.MongoClient(f'mongodb://{user}:{passwd}@{host}:{port}')

@@ -28,7 +28,7 @@ RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-ke
 RUN wget -N https://chromedriver.storage.googleapis.com/108.0.5359.71/chromedriver_linux64.zip -P ~/ \
     && unzip ~/chromedriver_linux64.zip -d ~/ \
     && rm ~/chromedriver_linux64.zip \
-    && mv -f ~/chromedriver /usr/local/bin/chromedriver \
+    && mv -f ~/chromedriver /usr/local/bin/chromedriver
 ```
 > **Warning** <br />
 > Take care to use `compatible` versions for `google-chrome` and `chromedriver`. Refer [this](https://stackoverflow.com/a/55266105/15333904) answer on StackOverflow.
@@ -44,6 +44,7 @@ RUN wget -N https://chromedriver.storage.googleapis.com/108.0.5359.71/chromedriv
 ### Running
 1. Activate the virtual environment.
 2. Execute `docker-compose up -d` to bring up the `MongoDB` server.
+3. Execute `python3 src/crawler.py start` to start the process of crawling.
 
 > **Note** <br />
 > In the Docker network, the MongoDB server will be running at port - `27017` and a service known as Mongo-Express will be running at port - `8081` which provides a GUI to access the database.
