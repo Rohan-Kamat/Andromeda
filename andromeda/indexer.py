@@ -1,32 +1,34 @@
-import pymongo
-from bson.json_util import dumps
 import json
 import os
 
+from bson.json_util import dumps
+import pymongo
+
+
 class Indexer:
     def __init__(
-        self,
-        user='admin',
-        passwd='adminpw',
-        host=os.environ.get('MONGODB_HOST') or 'localhost',
-        port=27017,
-        db='test',
+            self,
+            user='admin',
+            passwd='adminpw',
+            host=os.environ.get('MONGODB_HOST') or 'localhost',
+            port=27017,
+            database='test',
     ):
         print(host)
         try:
             print("Initializing DB connection...")
             self.client = pymongo.MongoClient(f'mongodb://{user}:{passwd}@{host}:{port}')
-            self.db = self.client[db]
-            self.websites = self.db['websites']
+            self.database = self.client[database]
+            self.websites = self.database['websites']
             print("DB connection established!")
         except Exception as error:
-            raise ConnectionAbortedError(error)
+            raise Exception from error
 
-    def exists(self, url:str) -> bool:
+    def exists(self, url: str) -> bool:
         website = self.get(url)
         return website is not None
 
-    def get(self, url:str):
+    def get(self, url: str):
         website = json.loads(dumps(self.websites.find(
             {'url': url},
             {}
@@ -34,7 +36,7 @@ class Indexer:
         assert len(website) <= 1
         return website[0] if len(website) == 1 else None
 
-    def increment_num_references(self, url:str) -> bool:
+    def increment_num_references(self, url: str) -> bool:
         if not self.exists(url):
             self.insert_url(url)
         self.websites.update_one(
@@ -43,7 +45,7 @@ class Indexer:
         )
         return self.get(url)['references']
 
-    def insert_url(self, url:str):
+    def insert_url(self, url: str):
         if not self.exists(url):
             self.websites.insert_one({
                 'url': url,
@@ -52,7 +54,7 @@ class Indexer:
                 'crawled': False
             })
 
-    def insert_data(self, url:str, data:dict):
+    def insert_data(self, url: str, data: dict):
         assert self.exists(url)
         self.websites.update_one(
             {'url': url},

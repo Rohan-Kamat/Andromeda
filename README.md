@@ -49,6 +49,9 @@ RUN wget -N https://chromedriver.storage.googleapis.com/108.0.5359.71/chromedriv
 > **Note** <br />
 > In the Docker network, the MongoDB server will be running at port - `27017` and a service known as Mongo-Express will be running at port - `8081` which provides a GUI to access the database.
 
+## Linting
+- Execute `pylint andromeda/` before making a PR and get rid of any lint errors.
+
 ## Guidelines
 - Please follow the [pep8](https://peps.python.org/pep-0008/) python style guide
 - Refer to this [link](https://cbea.ms/git-commit/) to write proper commit messages

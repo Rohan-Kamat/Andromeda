@@ -1,10 +1,12 @@
-from bs4 import BeautifulSoup
-import re
 from urllib.parse import urlparse, urljoin
+import re
+
+from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 
-from indexer import Indexer
+from andromeda.indexer import Indexer
+
 
 class Parser:
     def __init__(self):
@@ -16,16 +18,22 @@ class Parser:
             url = link['href']
             links.append(urljoin(url, urlparse(url).path))
         return links
-    
+
     def __get_word_frequency(self, soup):
         text = soup.get_text()
-        cv = CountVectorizer(stop_words='english') 
-        cv_matrix = cv.fit_transform([text]) 
-        word_freq = pd.DataFrame(cv_matrix.toarray(), columns=cv.get_feature_names_out()).to_dict('dict')
-        word_freq = {word: stats[0] for word, stats in word_freq.items() }
+        vectorizer = CountVectorizer(stop_words='english')
+        matrix = vectorizer.fit_transform([text])
+        word_freq = pd.DataFrame(
+            matrix.toarray(),
+            columns=vectorizer.get_feature_names_out()
+        ).to_dict('dict')
+        word_freq = {word: stats[0] for word, stats in word_freq.items()}
         return word_freq
 
     def parse(self, url, html):
+        if not self.indexer.exists(url):
+            self.indexer.insert_url(url)
+
         soup = BeautifulSoup(html, 'html.parser')
 
         links = self.__get_links(soup)
