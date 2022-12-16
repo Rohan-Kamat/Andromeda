@@ -418,6 +418,7 @@ disable=raw-checker-failed,
         use-symbolic-message-instead,
         too-few-public-methods,
         too-many-arguments,
+        import-error
         # to be enabled
         missing-function-docstring,
         missing-class-docstring,
