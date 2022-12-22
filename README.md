@@ -6,7 +6,7 @@ Building a search engine from scratch. We plan on implementing the 3 major compo
 ## Dev Server
 ### VPN Connection
 To establish a VPN connection to NITK-NET:
-1. Login at the Sophos portal - [link](vpnportal.nitk.ac.in).
+1. Login at the Sophos portal - [link](https://vpnportal.nitk.ac.in).
 2. Download SSL-VPN config file for the necessary OS.
 3. Execute `sudo openvpn <path-to-config-file>` to initiate the connection sequence. Keep this terminal open.
 
