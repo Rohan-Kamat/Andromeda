@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 
-from andromeda.indexer import Indexer
+from indexer import Indexer
 
 
 class Parser:

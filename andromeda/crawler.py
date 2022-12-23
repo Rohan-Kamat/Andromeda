@@ -8,7 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
-from andromeda.parser import Parser
+from _parser import Parser
 
 
 CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
