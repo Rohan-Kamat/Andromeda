@@ -36,17 +36,18 @@ RUN wget -N https://chromedriver.storage.googleapis.com/108.0.5359.71/chromedriv
 > Take care to use `compatible` versions for `google-chrome` and `chromedriver`. Refer [this](https://stackoverflow.com/a/55266105/15333904) answer on StackOverflow.
 
 #### Env
-1. Touch a file - `src/.env`. 
+1. Touch a file - `.env`. 
     ```.env
     MONGO_USER=admin
     MONGO_PASSWORD=adminpw
+    MONGO_DATABASE=test
     ```
-2. Create a virtual environment and then install all the dependencies in `src/requirements.txt` after activating the environment.
+2. Create a virtual environment and then install all the dependencies in `andromeda/requirements.txt` after activating the environment.
 
 ### Running
 1. Activate the virtual environment.
 2. Execute `docker-compose up -d` to bring up the `MongoDB` server.
-3. Execute `python3 src/crawler.py start` to start the process of crawling.
+3. Execute `python3 andromeda/crawler.py start` to start the process of crawling.
 
 > **Note** <br />
 > In the Docker network, the MongoDB server will be running at port - `27017` and a service known as Mongo-Express will be running at port - `8081` which provides a GUI to access the database.

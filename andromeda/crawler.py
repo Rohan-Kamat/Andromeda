@@ -53,7 +53,6 @@ class Crawler:
             if self.link_queue.empty():
                 sys.exit(0)
 
-CRAWLER = Crawler()
 
 @click.group()
 def cli():
@@ -61,7 +60,11 @@ def cli():
 
 @click.command(help="Start the crawler")
 def start():
-    CRAWLER.run()
+    crawler = Crawler(
+        chromedriver_path=CHROMEDRIVER_PATH,
+        initial_links=INITIAL_LINKS
+    )
+    crawler.run()
 
 cli.add_command(start)
 
