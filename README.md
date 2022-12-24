@@ -70,3 +70,6 @@ RUN wget -N https://chromedriver.storage.googleapis.com/108.0.5359.71/chromedriv
 - [Text Retrieval](https://www.coursera.org/learn/text-retrieval/home/info)
 - [Can I Make A Search Engine From Scratch](https://www.youtube.com/watch?v=Mwa4aphsJGI)
 - [Crawler Tutorials](https://youtube.com/playlist?list=PL6gx4Cwl9DGA8Vys-f48mAH9OKSUyav0q)
+- [Information Retrieval - MIT Press](https://mitmecsept.files.wordpress.com/2018/05/stefan-bc3bcttcher-charles-l-a-clarke-gordon-v-cormack-information-retrieval-implementing-and-evaluating-search-engines-2010-mit.pdf)
+- [Map Reduce](https://youtu.be/b-IvmXoO0bU)
+- [Docker](https://youtu.be/3c-iBn73dDE)
