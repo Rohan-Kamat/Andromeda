@@ -47,3 +47,59 @@ It uses vector representation of the `query` and `doc` to determine their simila
 - Dot Product
     - $f(q, d) = q.d = \sum_{i=1}^{N}{x_iy_i}$
     - $f(q, d)$ is basically equal to the number of `distinct` query words matched in d.
+
+### Improvements
+- $x_i, y_i = c(w_i, q/d)$
+- `Inverse Document Frequency (IDF)`
+    - $IDF(w) = log\frac{M+1}{k}$ where $M$ is the total number of docs in the collection and $k = df(w)$
+    - $y_i = c(w_i, d) * IDF(w_i)$
+    - The idea is to penalize frequently occuring terms such as `the`, `a`, `about` which do not convey any special meaning about the document
+- Where are we?
+$$f(q, d) = \sum_{i=1}^{N}{x_iy_i} = \sum_{w \in q \cap d}{c(w, q)c(w, d)log{\frac{M+1}{df(w)}}}$$
+- `TF Transformation`: `BM25`
+    - The idea is to set an asymptotic upper limit on `Term Frequency`
+    - $y=\frac{(k+1)x}{x + k}$ where $k$ is a constant and $x = c(w, d)$
+    - $k = 0$ represents the special case of `Bit Vectors`
+    - With a very large $k$, the function simulates $y=c(w,d)$
+- `Document Length Normalization`
+    - The idea is to penalize long documents as they have a chance to match any query
+    - `Pivoted Length Normalization VSM [Singhal et al 96]`
+        $$f(q, d) = \sum_{w \in q \cap d}{c(w, q)\frac{ln(1+ln(1+c(w,d)))}{1-b+b\frac{|d|}{avdl}}log{\frac{M+1}{df(w)}}}$$
+        $$b \in [0, 1]$$
+    - `BM25/Okapi [Robertson & Walker 94]`
+        $$f(q, d) = \sum_{w \in q \cap d}{c(w, q)\frac{(k + 1)c(w, d)}{c(w, d) + k(1-b+b\frac{|d|}{avdl})}log{\frac{M+1}{df(w)}}}$$
+        $$k \in [0, \infty)$$
+
+### Further Improvements
+- BM25F
+- BM25+
+
+## System Architecture
+
+![](./public/images/sys_arch.png)
+
+### Tokenization
+- Transform everything to lowercase
+- Remove stopwords
+- `Stemming`: Mapping similar words to the same root form such as `computer, computation, computing` should map be `compute`
+
+### Indexing
+- Converting documents to data structures that enable fast search
+- Inverted index is the dominating method
+
+#### Data Structures
+1. `Dictionary`
+    - Modest size
+    - In-memory
+2. `Postings`
+    - Huge
+    - Secondary memory
+    - Compression is desirable
+
+## Zipf's Law
+$$Rank * Frequency \approx Constant$$
+$$F(w) = \frac{C}{r(w)^\alpha}$$
+$$\alpha \approx 1, C \approx 0.1$$
+
+This tells us that words with lower ranks having huge postings may be dropped all together as they do not meaningfully contribute to the ranking.
+
