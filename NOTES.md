@@ -98,7 +98,9 @@ $$f(q, d) = \sum_{i=1}^{N}{x_iy_i} = \sum_{w \in q \cap d}{c(w, q)c(w, d)log{\fr
 
 ## Zipf's Law
 $$Rank * Frequency \approx Constant$$
+
 $$F(w) = \frac{C}{r(w)^\alpha}$$
+
 $$\alpha \approx 1, C \approx 0.1$$
 
 This tells us that words with lower ranks having huge postings may be dropped all together as they do not meaningfully contribute to the ranking.
