@@ -130,4 +130,4 @@ dmypy.json
 
 *.ovpn
 
-tmp.py
+tmp.*

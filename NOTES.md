@@ -46,7 +46,7 @@ It uses vector representation of the `query` and `doc` to determine their simila
         - `0`: word $w_i$ is absent
 - Dot Product
     - $f(q, d) = q.d = \sum_{i=1}^{N}{x_iy_i}$
-    - $f(q, d)$ is basically equal to the number of `distinct` query words matched in d.
+    - $f(q, d)$ is basically equal to the number of `distinct` query words matched in d.  MN
 
 ### Improvements
 - $x_i, y_i = c(w_i, q/d)$
@@ -105,3 +105,85 @@ $$\alpha \approx 1, C \approx 0.1$$
 
 This tells us that words with lower ranks having huge postings may be dropped all together as they do not meaningfully contribute to the ranking.
 
+## Evaluation
+
+### Metrics
+1. Effectiveness/Accuracy
+2. Efficiency
+3. Usability
+
+### Precision v. Recall
+
+|            | Retrieved | Not Retrieved |
+|------------|-----------|---------------|
+| Relavant   | a         | b             |
+| Irrelevant | c         | d             |
+
+$$Precision = \frac{a}{a + c}$$
+
+$$Recall = \frac{a}{a + b}$$
+
+Ideally, $Precision = Recall = 1.0$. In reality, high recall tends to be associated with low precision.
+
+#### F-Measure
+
+$$F_\beta = \frac{(\beta^2 + 1)PR}{\beta^2P + R}$$
+
+$$F_1 = \frac{2PR}{R + R}$$
+
+#### Precision-Recall (PR) Curve
+
+|      | P   | R    |
+|------|-----|------|
+| D1+  | 1/1 | 1/10 |
+| D2+  | 2/2 | 2/10 |
+| D3-  |     |      |
+| D4-  |     |      |
+| D5+  | 3/5 | 3/10 |
+| D6-  |     |      |
+| D7-  |     |      |
+| D8+  | 4/8 | 4/10 |
+| D9-  |     |      |
+| D10- |     |      |
+
+The table above represents the P-R measures for a TR system's ranked list for a query. Notice that only entries with a relevant documents are considered for the PR Curve. The relevant documents have been identified by a `+` in the table as opposed to a `-` for irrelevant ones. For the rest of the entries in the list which goes on, `precision may be assumed to be 0`.
+
+![](./public/images/pr.png)
+
+*Fig. PR Curve*
+
+#### Average Precision
+$$Average Precision = \frac{\frac{1}{1} + \frac{2}{2} + \frac{3}{5} + \frac{4}{8} + 0 + 0 + 0 + 0 + 0 + 0}{10}$$
+
+#### MAP
+Arithmetic mean of average precision over a set of queries.
+
+#### gMAP
+Geometric mean of average precision over a set of queries.
+
+### Multi-level Relevance Judgements
+
+|    | Gain | Cumulative Gain | Discounted Cumulative Gain |
+|----|------|-----------------|----------------------------|
+| D1 | 3    | 3               | 3                          |
+| D2 | 2    | 3+2             | 3+2/log2                   |
+| D3 | 1    | 3+2+1           | 3+2/log2+1/log3            |
+| D4 | 1    | 3+2+1+1         | 3+2/log2+1/log3+1/log4     |
+
+#### Normalized DCG
+$$nDCG_k = \frac{DCG_k}{Ideal DCG_k}$$
+
+Assuming, there are 9 documents rated `3` in the collection pointed to by the table above,
+$$IdealDCG_{10} = 3 + \frac{3}{log{2}} + ... + \frac{3}{log{9}} + \frac{2}{log{10}}$$
+
+### Statistical Significance Testing
+
+| Query   | Sys A | Sys B | Sign Test | Wilcoxon |
+|---------|-------|-------|-----------|----------|
+| 1       | 0.02  | 0.76  | +         | +0.74    |
+| 2       | 0.39  | 0.07  | -         | -0.32    |
+| 3       | 0.16  | 0.37  | +         | +0.21    |
+| Average | 0.19  | 0.4   | p=1.0     | p=0.63   |
+
+### Pooling: Avoid Judging all Documents for Evaluation
+We cannot afford judging all documents, so can combine the `top-k` documents returned by different strategies and only judge them. The rest can be given a default relevance value.
