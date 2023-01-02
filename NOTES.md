@@ -249,3 +249,83 @@ $$p(w|d) = \frac{|d|}{|d| + \mu}\frac{c(w, d)}{|d|} + \frac{\mu}{|d| + \mu} p(w|
 $$\mu \in [0, +\infty)$$
 
 $$\alpha_{d} = \frac{\mu}{|d| + \mu}$$
+
+## Feedback
+The feedback is used to update the query and get better results.
+
+### Types
+1. Relevance
+    - Explicit feedback from users
+2. Pseduo/Blind/Automatic
+    - Assume top-10 docs to be relevant
+3. Implicit
+    - Track user's activity i.e. clicks
+
+### Rocchio Feedback
+
+$$\vec{q_m} = \alpha\vec{q} + \frac{\beta}{|D_r|}\sum_{\forall\vec{d_j} \in D_r}{\vec{d_j}} - \frac{\gamma}{|D_n|}\sum_{\forall\vec{d_j} \in D_n}{\vec{d_j}}$$
+
+Here, $D_r$ and $D_n$ represent `relevant` and `irrelevant` documents. $D_n$ is not very important because they are often spread out and cancel each other out. `Over-fitting` must be avoided by keeping a relatively high weight on the original query. Rocchio feedback may be used with relevance and pseudo feedback methods.
+
+## Link Analysis
+
+### The PageRank Algorithm
+
+![](./public/images/web.png)
+
+#### Random Surfing Model
+    - A user randomly jumps to another page with prob. $\alpha$
+    - The user randomly picks a link to follow with prob. $(1 - \alpha)$
+
+The figure above represents the links within a collection of 4 documents. The transition matrix for the same is given below.
+
+$$M = \begin{bmatrix}
+0 & 0 & 1/2 & 1/2 \\ 
+1 & 0 & 0 & 0 \\ 
+0 & 1 & 0 & 0 \\ 
+1/2 & 1/2 & 0 & 0
+\end{bmatrix}$$
+
+$$M_{ij} = p(d_i \rightarrow d_j)$$
+
+$$\sum_{j = 1}^{N}{M_{ij}} = 1$$
+
+##### Equilibrium Equation
+
+$$p_{t+1}(d_j) = (1 - \alpha)\sum_{i=1}^{N}{M_{ij}p_t(d_i)} + \alpha \sum_{i=1}^{N}{\frac{1}{N}p_t(d_i)}$$
+
+$$p(d_j) = \sum_{i=1}^{N}{[\frac{\alpha}{N} + (1 - \alpha)M_{ij}]p(d_i)}$$
+
+$$\implies \vec{p} = (\alpha I + (1 - \alpha)M)^T\vec{p}$$
+
+$$I = 1/N$$
+
+$$\text{At } t = 0, p(d) = 1/N$$
+
+We can iterate this matrix multiplication until convergence.
+
+> **Note** <br />
+> Set $\alpha = 0$ for a page with no outlink.
+
+### HITS
+
+The idea is to give an `authoritative` and `hub` score to each page. A page with many in-links from hubs is considered be a page with vital information whereas, a page with many out-links to promiminent authoritative pages is a called a hub.
+
+$$A = \begin{bmatrix}
+0 & 0 & 1 & 1 \\ 
+1 & 0 & 0 & 0 \\ 
+0 & 1 & 0 & 0 \\ 
+1 & 1 & 0 & 0
+\end{bmatrix}$$
+
+$$\text{Initally, } a(d_i) = 1, h(d_i) = 1$$
+
+$$h(d_i) = \sum_{d_j \in  OUT(d_i)}{a(d_j)}$$
+
+$$a(d_i) = \sum_{d_j \in  IN(d_i)}{h(d_j)}$$
+
+$$\vec{h} = A\vec{a}, \vec{a} = A^T\vec{h}$$
+
+$$\vec{h} = AA^T\vec{h}, \vec{a} = AA^T\vec{a}$$
+
+The procedure is to iterate and normalize until convergence. For normalization, $\sum{a(d_i)^2} = \sum{h(d_i)^2} = 1$
