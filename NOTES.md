@@ -302,10 +302,7 @@ $$I = 1/N$$
 
 $$\text{At } t = 0, p(d) = 1/N$$
 
-We can iterate this matrix multiplication until convergence.
-
-> **Note** <br />
-> Set $\alpha = 0$ for a page with no outlink.
+We can iterate this matrix multiplication until convergence. Set $\alpha = 0$ for a page with no outlink.
 
 ### HITS
 
