@@ -73,3 +73,4 @@ RUN wget -N https://chromedriver.storage.googleapis.com/108.0.5359.71/chromedriv
 - [Information Retrieval - MIT Press](https://mitmecsept.files.wordpress.com/2018/05/stefan-bc3bcttcher-charles-l-a-clarke-gordon-v-cormack-information-retrieval-implementing-and-evaluating-search-engines-2010-mit.pdf)
 - [Map Reduce](https://youtu.be/b-IvmXoO0bU)
 - [Docker](https://youtu.be/3c-iBn73dDE)
+- [MeTA](https://github.com/meta-toolkit/meta)
