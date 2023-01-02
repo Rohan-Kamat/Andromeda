@@ -274,8 +274,8 @@ Here, $D_r$ and $D_n$ represent `relevant` and `irrelevant` documents. $D_n$ is 
 ![](./public/images/web.png)
 
 #### Random Surfing Model
-    - A user randomly jumps to another page with prob. $\alpha$
-    - The user randomly picks a link to follow with prob. $(1 - \alpha)$
+- A user randomly jumps to another page with prob. $\alpha$
+- The user randomly picks a link to follow with prob. $(1 - \alpha)$
 
 The figure above represents the links within a collection of 4 documents. The transition matrix for the same is given below.
 
