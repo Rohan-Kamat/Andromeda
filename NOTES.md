@@ -187,3 +187,65 @@ $$IdealDCG_{10} = 3 + \frac{3}{log{2}} + ... + \frac{3}{log{9}} + \frac{2}{log{1
 
 ### Pooling: Avoid Judging all Documents for Evaluation
 We cannot afford judging all documents, so can combine the `top-k` documents returned by different strategies and only judge them. The rest can be given a default relevance value.
+
+## Probabilistic Models
+
+$$f(q, d) = p(R = 1 | q, d) \approx p(q | d, R = 1)$$
+
+The `Query likelihood` ranking function tries to find the probability of a user posing a query `q`, given that they wish to retrieve `d`.
+
+### Language Model (LM)
+#### The Simplest Language Model: Unigram LM
+- Each word is generated independently
+- $p(w_1 w_2 ...) = p(w_1)p(w_2)...$
+- The probabilities of a language may be determined in different contexts such as the `entire english text`, `few computer science papers` or a `food nutrition paper`
+
+#### Association Analysis
+
+![](./public/images/word_association.png)
+
+The figure above illustrates how LMs may be used for word association such as associating software with computer in the example above.
+
+### Query Likelihood Model
+
+$$p(q | d) = p(q_1 | d) * p(q_2 | d) * ...$$
+
+$$f(q, d) = \log{p(q | d)} = \sum_{i = 1}^{n}{\log{p(q_i | d)}} = \sum_{w \in V}{c(w, q)\log{p(w | d)}}$$
+
+#### Smoothing
+
+$$p_{ML}(w | d) = \frac{c(w, d)}{|d|}$$
+
+In a smoothed distribution, $p(w | d) > 0$ even if $c(w, d) = 0$
+
+$$p(w | d) = \left\{\begin{matrix}
+p_{seen}(w|d), & c(w, d) \neq 0 \\\ 
+\alpha_{d}p(w|C), & \text{otherwise}
+\end{matrix}\right.$$
+
+Now,
+$$f(q, d) = \sum_{w \in V, c(w, d) > 0}{c(w, q)\log{p_{seen}(w|d)}} + \sum_{w \in V, c(w, d) = 0}{c(w, q)\log{\alpha_{p}p(w|d)}}$$
+
+$$= \sum_{w \in V, c(w, d) > 0}{c(w, q)\log{p_{seen}(w|d)}} + \sum_{w \in V}{c(w, q)\log{\alpha_{p}p(w|C)}} - \sum_{w \in V, c(w, d) > 0}{c(w, q)\log{\alpha_{p}p(w|C)}}$$
+
+$$= \sum_{w \in V, c(w, d) > 0}{c(w, q)\log{\frac{p_{seen}(w|d)}{\alpha_{p}p(w|C)}}} + \sum_{w \in V}{c(w, q)\log{\alpha_{p}p(w|C)}}$$
+
+$$= \sum_{w \in V, c(w, d) > 0}{c(w, q)\log{\frac{p_{seen}(w|d)}{\alpha_{p}p(w|C)}}} + n\log{\alpha_{p}} + \sum_{i = 1}^{n}{\log{p(q_i|C)}}$$
+
+This final form of the equation enables efficient computation. The last term above may be `ignored` for ranking as it is independent of a document. The terms $p_{seen}(w|d)$ and $\alpha_{p}p(w|C)$ represent `TF` and `IDF` weighting respectively. The term $\alpha_{d}$ is used for `Doc-Length Normalization`.
+
+##### Linear Interpolation - `Jelinek-Mercer` Smoothing
+
+$$p(w|d) = (1 - \lambda)\frac{c(w, d)}{|d|} + \lambda p(w|C)$$
+
+$$\lambda \in [0, 1]$$
+
+$$\alpha_{d} = \lambda$$
+
+##### Bayesian - `Dirichlet Prior` Smoothing
+
+$$p(w|d) = \frac{|d|}{|d| + \mu}\frac{c(w, d)}{|d|} + \frac{\mu}{|d| + \mu} p(w|C)$$
+
+$$\mu \in [0, +\infty)$$
+
+$$\alpha_{d} = \frac{\mu}{|d| + \mu}$$
