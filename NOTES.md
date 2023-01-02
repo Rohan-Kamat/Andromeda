@@ -329,3 +329,7 @@ $$\vec{h} = A\vec{a}, \vec{a} = A^T\vec{h}$$
 $$\vec{h} = AA^T\vec{h}, \vec{a} = AA^T\vec{a}$$
 
 The procedure is to iterate and normalize until convergence. For normalization, $\sum{a(d_i)^2} = \sum{h(d_i)^2} = 1$
+
+## Machine Learning
+
+So far, we have seen may algorithms which may be combined using simple machine-learning models such as logistic regression.
