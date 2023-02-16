@@ -26,6 +26,7 @@ class Indexer:
 
     def exists(self, url: str) -> bool:
         website = self.get(url)
+        #print(website)
         return website is not None
 
     def get(self, url: str):
@@ -44,7 +45,10 @@ class Indexer:
             {'$inc': {'references': 1}}
         )
         return self.get(url)['references']
-
+    
+    def crawler_checker(self, url: str):
+        return self.get(url)['crawled']
+        
     def insert_url(self, url: str):
         if not self.exists(url):
             self.websites.insert_one({
