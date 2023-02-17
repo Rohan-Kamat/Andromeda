@@ -2,6 +2,7 @@
 
 from queue import Queue
 import sys
+from threading import Thread
 
 import click
 from selenium import webdriver
@@ -17,10 +18,23 @@ INITIAL_LINKS = [
     'https://www.wikipedia.org/'
 ]
 
+link_queue = Queue()
+for link in INITIAL_LINKS:
+    link_queue.put(link)
+
+def thread(id):
+    crawler = Crawler(id)
+
+    crawler.run()
+
 class Crawler:
-    def __init__(self, chromedriver_path=CHROMEDRIVER_PATH, initial_links=None):
-        if initial_links is None:
-            initial_links = INITIAL_LINKS
+    def log(self, msg):
+        print(f"Crawler {self.id}: {msg}")
+
+    def __init__(self, id, chromedriver_path=CHROMEDRIVER_PATH):
+        global link_queue
+
+        self.id = id
 
         self.parser = Parser()
 
@@ -29,9 +43,7 @@ class Crawler:
         options.add_argument("--headless")
         self.driver = webdriver.Chrome(service=Service(chromedriver_path), options=options)
 
-        self.link_queue = Queue()
-        for link in initial_links:
-            self.link_queue.put(link)
+        self.log("Initialized")
 
     def get(self, url: str):
         self.driver.get(url)
@@ -39,19 +51,24 @@ class Crawler:
         return page
 
     def run(self):
+        while link_queue.empty():
+            self.log("Waiting for link")
+            pass
+
         while True:
-            link = self.link_queue.get()
-            print(link)
+            link = link_queue.get()
+
+            self.log(f"Getting {link}")
 
             page = self.get(link)
 
             new_links, _ = self.parser.parse(link, page)
             for link in new_links:
-                self.link_queue.put(link)
-            print(self.link_queue.qsize())
+                link_queue.put(link)
+            print(f"The gloabl link_queue has {link_queue.qsize()} links")
 
-            if self.link_queue.empty():
-                sys.exit(0)
+            # if link_queue.empty():
+            #     sys.exit(0)
 
 
 @click.group()
@@ -60,11 +77,15 @@ def cli():
 
 @click.command(help="Start the crawler")
 def start():
-    crawler = Crawler(
-        chromedriver_path=CHROMEDRIVER_PATH,
-        initial_links=INITIAL_LINKS
-    )
-    crawler.run()
+    NUM_CRAWLERS = 2
+
+    crawlers = [Thread(target=thread, args=(id,)) for id in range(NUM_CRAWLERS)]
+
+    for crawler in crawlers:
+        crawler.start()
+
+    for crawler in crawlers:
+        crawler.join()
 
 cli.add_command(start)
 
