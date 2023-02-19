@@ -70,7 +70,7 @@ def cli():
 @click.command(help="Start the crawler")
 def start():
   try:
-    num_crawlers=20
+    num_crawlers=2
     crawlers=[]
     for id in range(num_crawlers):
       print(id)

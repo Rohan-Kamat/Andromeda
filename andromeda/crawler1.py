@@ -22,12 +22,14 @@ INITIAL_LINKS = [
 link_queue=Queue()
 for link in INITIAL_LINKS:
     link_queue.put(link) 
- 
+def run_thread(id):
+ crawler = Crawler(
+        chromedriver_path=CHROMEDRIVER_PATH)
+ crawler.run(id)
 class Crawler:
     def __init__(self, chromedriver_path=CHROMEDRIVER_PATH):
         self.parser = Parser()
-        
-        # self.pool = ThreadPoolExecutor(max_workers=2)
+        global link_queue
         options = Options()
         options.add_argument('--no-sandbox')
         options.add_argument("--headless")
@@ -42,13 +44,10 @@ class Crawler:
          return page
         except:
          print("Unable to get the Page!!")
-         global link_queue
          link_queue.put(url)
          return 
-    #def run_thread
-    def run(self,id,lock):
+    def run(self,id):
          print("Crawler id:",id)
-         global link_queue
          while link_queue.empty(): 
             pass
          while True:
@@ -56,26 +55,14 @@ class Crawler:
             link = link_queue.get()
             print(link)
             page=self.get(link)
-            lock.acquire()
             new_links, _ = self.parser.parse(link,page)
             for link in new_links:
                link_queue.put(link)
-            lock.release()
           except Exception as error:
-                 print("Error12 Occurred!")
-                 link_queue.put(link)
+                print("Error12 Occurred!")
+                link_queue.put(link)
           print(link_queue.qsize())
-         
-    def runner(self):
-     num_crawlers=2
-     crawlers=[]
-     lock=threading.Lock()
-     for id in range(num_crawlers):
-       crawlers.append(threading.Thread(target=self.run,args=(id,lock)))
-     for crawler in crawlers:
-        crawler.start()
-     for crawler in crawlers:
-        crawler.join()
+     
 @click.group()
 def cli():
     pass
@@ -83,9 +70,14 @@ def cli():
 @click.command(help="Start the crawler")
 def start():
   try:
-    crawler = Crawler(
-        chromedriver_path=CHROMEDRIVER_PATH)
-    crawler.runner()
+    num_crawlers=4
+    crawlers=[]
+    for id in range(num_crawlers):
+      print(id)
+      crawlers.append(multiprocessing.Process(target=run_thread,args=(id,)))
+    for crawler in crawlers:
+        crawler.start()
+        crawler.join()
   except Exception as error:
      print("Error Occurred!")
      start()
