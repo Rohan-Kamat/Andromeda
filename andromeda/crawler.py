@@ -39,9 +39,9 @@ class Crawler:
         self.driver.get(url)
         soup = BeautifulSoup(self.driver.page_source, 'html.parser')
         page = self.driver.page_source
-        if 'en' in soup.html['lang']:
-            return page
-        return None
+        if not soup.html.has_attr('lang') or 'en' not in soup.html['lang']:
+            return None
+        return page
     def run(self):
         while True:
             link = self.link_queue.get()
