@@ -1,13 +1,14 @@
 #!/usr/bin/python
 
-from queue import Queue
 import sys
+from queue import Queue
+from bs4 import BeautifulSoup
+
 
 import click
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-
 from _parser import Parser
 
 
@@ -35,15 +36,19 @@ class Crawler:
 
     def get(self, url: str):
         self.driver.get(url)
+        soup = BeautifulSoup(self.driver.page_source, 'html.parser')
         page = self.driver.page_source
+        if not soup.html.has_attr('lang') or 'en' not in soup.html['lang']:
+            return None
         return page
-
     def run(self):
         while True:
             link = self.link_queue.get()
             print(link)
 
             page = self.get(link)
+            if page is None:
+                continue
 
             new_links, _ = self.parser.parse(link, page)
             for link in new_links:
@@ -70,3 +75,4 @@ cli.add_command(start)
 
 if __name__ == '__main__':
     cli()
+    
