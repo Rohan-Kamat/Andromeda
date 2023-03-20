@@ -51,17 +51,17 @@ class Crawler:
          while link_queue.empty(): 
             pass
          while True:
-          try:
+          #try:
             link = link_queue.get()
             print(link)
             page=self.get(link)
             new_links, _ = self.parser.parse(link,page)
             for link in new_links:
                link_queue.put(link)
-          except Exception as error:
-                print("Error12 Occurred!")
-                link_queue.put(link)
-          print(link_queue.qsize())
+         #except Exception as error:
+                #print("Error12 Occurred!")
+                #link_queue.put(link)
+         print(link_queue.qsize())
      
 @click.group()
 def cli():
