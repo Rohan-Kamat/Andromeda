@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import threading
 import multiprocessing
 import time
@@ -7,14 +6,12 @@ from concurrent.futures import ThreadPoolExecutor
 from queue import Queue
 import sys
 import pickle
-import sys
-from queue import Queue
-from bs4 import BeautifulSoup
 import click
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+
 from _parser import Parser
 
 CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
@@ -54,17 +51,17 @@ class Crawler:
          while link_queue.empty(): 
             pass
          while True:
-          #try:
+          try:
             link = link_queue.get()
             print(link)
             page=self.get(link)
             new_links, _ = self.parser.parse(link,page)
             for link in new_links:
                link_queue.put(link)
-         #except Exception as error:
-                #print("Error12 Occurred!")
-                #link_queue.put(link)
-         print(link_queue.qsize())
+          except Exception as error:
+                print("Error12 Occurred!")
+                link_queue.put(link)
+          print(link_queue.qsize())
      
 @click.group()
 def cli():
@@ -73,14 +70,13 @@ def cli():
 @click.command(help="Start the crawler")
 def start():
   try:
-    num_crawlers=2
+    num_crawlers=4
     crawlers=[]
     for id in range(num_crawlers):
       print(id)
-      crawlers.append(threading.Thread(target=run_thread,args=(id,)))
+      crawlers.append(multiprocessing.Process(target=run_thread,args=(id,)))
     for crawler in crawlers:
         crawler.start()
-    for crawler in crawlers:
         crawler.join()
   except Exception as error:
      print("Error Occurred!")

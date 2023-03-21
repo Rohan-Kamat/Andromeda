@@ -3,7 +3,7 @@ import os
 
 from bson.json_util import dumps
 import pymongo
-import redis
+
 
 class Indexer:
     def __init__(
@@ -16,9 +16,6 @@ class Indexer:
     ):
         print(host)
         try:
-            self.cache = redis.Redis( host='localhost', port=6379,db=0,password=None,decode_responses=True)
-            if self.cache.ping():
-                print("Redis DB has established!")
             print("Initializing DB connection...")
             self.client = pymongo.MongoClient(f'mongodb://{user}:{passwd}@{host}:{port}')
             self.database = self.client[database]
@@ -29,9 +26,9 @@ class Indexer:
             raise Exception from error
 
     def exists(self, url: str) -> bool:
-         #print("Checking exists",self.cache.exists(url),"here")
-         website = self.get(url)
-         return website is not None
+        website = self.get(url)
+        #print(website)
+        return website is not None
     def word_exists(self, word: str) -> bool:
         word_dat = self.word_get(word)
         return word_dat is not None
@@ -67,10 +64,8 @@ class Indexer:
         return website[0] if len(website) == 1 else None
 
     def increment_num_references(self, url: str) -> bool:
-        print(self.cache.get(url))
         if not self.exists(url):
             self.insert_url(url)
-        self.cache.set(url,'False1')
         self.websites.update_one(
             {'url': url},
             {'$inc': {'references': 1}}
@@ -81,7 +76,6 @@ class Indexer:
         return self.get(url)['crawled']
         
     def insert_url(self, url: str):
-        #print("Checking insert url",self.cache.exists(url),"here")
         if not self.exists(url):
             self.websites.insert_one({
                 'url': url,
