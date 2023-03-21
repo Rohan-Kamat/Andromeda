@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 import threading
 import multiprocessing
 import time
@@ -6,12 +7,14 @@ from concurrent.futures import ThreadPoolExecutor
 from queue import Queue
 import sys
 import pickle
+import sys
+from queue import Queue
+from bs4 import BeautifulSoup
 import click
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-
 from _parser import Parser
 
 CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
