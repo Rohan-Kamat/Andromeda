@@ -52,7 +52,7 @@ class Parser:
             lang = soup.html['lang']
             return lang
         except Exception as error:
-            logging.error("Language 404: %s", error)
+            logging.debug(error)
             return None
 
     def parse(self, url, html):

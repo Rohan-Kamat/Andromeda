@@ -421,6 +421,7 @@ disable=raw-checker-failed,
         broad-except,
         line-too-long,
         too-many-locals,
+        redefined-outer-name,
         # to be enabled
         missing-function-docstring,
         missing-class-docstring,

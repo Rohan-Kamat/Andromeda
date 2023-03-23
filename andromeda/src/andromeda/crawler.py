@@ -1,21 +1,21 @@
 #!/usr/bin/python
 
 from queue import Queue
-import threading
 import logging
+import atexit
+import pickle
 
-import click
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 from andromeda.parser import Parser
-from andromeda.indexer import Websites, InvertedIndex, Summary
+from andromeda.config import LOG_FILE, PROGRESS_FILE
 
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
-    filename='andromeda.log',
+    filename=LOG_FILE,
     filemode='w+',
     format='%(asctime)s %(msecs)d %(pathname)s %(threadName)s %(levelname)s %(message)s',
     datefmt='%H:%M:%S',
@@ -27,6 +27,13 @@ CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
 INITIAL_LINKS = [
     'https://www.wikipedia.org/'
 ]
+try:
+    with open(PROGRESS_FILE, 'rb') as save_file:
+        logging.info("Loading INITIAL_LINKS from %s", PROGRESS_FILE)
+        INITIAL_LINKS = pickle.load(save_file)
+except Exception as error:
+    pass
+
 link_queue = Queue()
 for link in INITIAL_LINKS:
     link_queue.put(link)
@@ -43,6 +50,7 @@ class Crawler:
         options.add_argument("--headless")
         self.driver = webdriver.Chrome(service=Service(chromedriver_path), options=options)
 
+        atexit.register(exit_handler)
         logging.info("Initalised")
 
     def get(self, url: str):
@@ -52,58 +60,23 @@ class Crawler:
 
     def run(self):
         while True:
-            get_link = link_queue.get()
-            logging.info("The global link_queue has %i url(s)", link_queue.qsize())
-            logging.info("Getting %s", get_link)
+            try:
+                get_link = link_queue.get()
+                logging.info("The global link_queue has %i url(s)", link_queue.qsize())
+                logging.info("Getting %s", get_link)
 
-            page = self.get(get_link)
-            logging.info("Downloaded %s", get_link)
+                page = self.get(get_link)
+                logging.info("Downloaded %s", get_link)
 
-            new_links, _ = self.parser.parse(get_link, page)
-            for new_link in new_links:
-                link_queue.put(new_link)
+                new_links, _ = self.parser.parse(get_link, page)
+                for new_link in new_links:
+                    link_queue.put(new_link)
+            except Exception as error:
+                logging.error("Failed to get %s: %s", get_link, str(error).split('\n', maxsplit=1)[0])
+                logging.debug(error)
 
-def start_crawler(crawler_id):
-    crawler = Crawler(crawler_id)
-    crawler.run()
+                link_queue.put(get_link)
 
-@click.group()
-def cli():
-    pass
-
-@click.command(help="Start the crawler")
-@click.option('--n_thread', type=int, help="Number of threads", default=1)
-def start(n_thread):
-    threads = [threading.Thread(target=start_crawler, args=(crawler_id,), name=f'Crawler#{crawler_id}') for crawler_id in range(n_thread)]
-
-    for thread in threads:
-        thread.start()
-
-    for thread in threads:
-        thread.join()
-
-@click.command(help="Get a single link")
-@click.option('--url', type=str, help="URL to be crawled")
-def get(url):
-    crawler = Crawler(0)
-    crawler.get(url)
-
-@click.command(help="Flush the database")
-def flush():
-    logging.info("Flushing the database")
-    websites = Websites()
-    websites.flush()
-
-    inverted_index = InvertedIndex()
-    inverted_index.flush()
-
-    summary = Summary()
-    summary.flush()
-
-cli.add_command(start)
-cli.add_command(flush)
-cli.add_command(get)
-
-
-if __name__ == '__main__':
-    cli()
+def exit_handler():
+    with open(PROGRESS_FILE, 'wb') as save_file:
+        pickle.dump(list(link_queue.queue), save_file)
