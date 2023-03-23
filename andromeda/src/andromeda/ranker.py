@@ -47,7 +47,7 @@ class BM25(Ranker):
                 term_freq = n_doc / norm_len
                 term_freq = (self._k + 1) * term_freq / (self._k + term_freq)
 
-                if url not in docs.keys():
+                if url not in docs:
                     docs[url] = 0
                 docs[url] += n_query * term_freq * inv_doc_freq
 
