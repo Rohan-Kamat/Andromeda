@@ -66,5 +66,4 @@ class Parser:
     
         self.indexer.insert_data(url, word_freq)
         self.indexer.insert_word_data(url,dict1)
-        print(new_links)
         return new_links, word_freq

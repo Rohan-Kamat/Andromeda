@@ -69,7 +69,6 @@ class Indexer:
         return website[0] if len(website) == 1 else None
 
     def increment_num_references(self, url: str) -> bool:
-        print("cached url" ,self.cache.get(url))
         if not self.exists(url):
             self.insert_url(url)
             
