@@ -39,14 +39,14 @@ class Parser:
             return None
 
     def parse(self, url, html):
-        if not self.indexer.exists(url):
-            self.indexer.insert_url(url)
-
         soup = BeautifulSoup(html, 'html.parser')
 
         lang = self.__get_language(soup)
         if lang is None or 'en' not in lang:
             return [], {}
+
+        if not self.indexer.exists(url):
+            self.indexer.insert_url(url)
 
         links = self.__get_links(soup)
 
@@ -58,6 +58,6 @@ class Parser:
             if refs == 1:
                 new_links.append(link)
 
-        self.indexer.insert_data(url, word_freq)
+        self.indexer.insert_data(url, word_freq, lang)
 
         return new_links, word_freq

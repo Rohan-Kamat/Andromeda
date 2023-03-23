@@ -56,13 +56,13 @@ class Indexer:
                 'url': url,
                 'references': 0,
                 'data': None,
-                'crawled': False
+                'crawled': False,
             })
 
-    def insert_data(self, url: str, data: dict):
+    def insert_data(self, url: str, data: dict, lang: str):
         assert self.exists(url)
         self.websites.update_one(
             {'url': url},
-            {'$set': {'data': data, 'crawled': True}}
+            {'$set': {'data': data, 'crawled': True, 'lang': lang}}
         )
         return self.get(url)

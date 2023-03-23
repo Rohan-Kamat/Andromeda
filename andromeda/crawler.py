@@ -61,7 +61,7 @@ def cli():
     pass
 
 @click.command(help="Start the crawler")
-@click.option('--n_thread', type=int, help="Number of threads")
+@click.option('--n_thread', type=int, help="Number of threads", default=1)
 def start(n_thread):
     threads = [threading.Thread(target=start_crawler, args=(crawler_id,)) for crawler_id in range(n_thread)]
 
