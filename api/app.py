@@ -13,4 +13,4 @@ def index():
 def search():
     query = request.args['query']
     ranker = BM25()
-    return ranker.get_documents(query)
+    return ranker.get_docs(query)

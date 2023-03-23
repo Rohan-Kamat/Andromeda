@@ -27,6 +27,9 @@ class Database(metaclass=abc.ABCMeta):
         except Exception as error:
             raise Exception from error
 
+    def count(self):
+        return self.collection.count_documents({})
+
     def flush(self) -> None:
         try:
             self.collection.drop()
@@ -41,6 +44,30 @@ class Database(metaclass=abc.ABCMeta):
     def get(self, key: str):
         """
         """
+
+class Summary(Database):
+    def __init__(self):
+        super().__init__('summary')
+
+    def get(self, key: str):
+        data = json.loads(dumps(self.collection.find(
+            {'key': key},
+            {}
+        )))
+        assert len(data) <= 1
+        return data[0]['value'] if len(data) == 1 else None
+
+    def update(self, key, value):
+        if not self.exists(key):
+            self.collection.insert_one({
+                'key': key,
+                'value': 0,
+            })
+
+        self.collection.update_one(
+            {'key': key},
+            {'$set': {'value': value}}
+        )
 
 class InvertedIndex(Database):
     def __init__(self):
@@ -72,6 +99,7 @@ class InvertedIndex(Database):
 class Websites(Database):
     def __init__(self):
         self.index = InvertedIndex()
+        self.summary = Summary()
 
         super().__init__('websites')
 
@@ -105,9 +133,14 @@ class Websites(Database):
         for word, freq in data.items():
             self.index.update_index(word, url, freq)
 
+        length = sum(data.values())
+        total_length = self.summary.get('total_length') or 0
+        total_length += length
+        self.summary.update('total_length', total_length)
+
         assert self.exists(url)
         self.collection.update_one(
             {'url': url},
-            {'$set': {'data': data, 'crawled': True, 'lang': lang}}
+            {'$set': {'data': data, 'crawled': True, 'lang': lang, 'length': length}}
         )
         return self.get(url)

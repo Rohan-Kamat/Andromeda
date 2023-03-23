@@ -420,6 +420,7 @@ disable=raw-checker-failed,
         too-many-arguments,
         broad-except,
         line-too-long,
+        too-many-locals,
         # to be enabled
         missing-function-docstring,
         missing-class-docstring,

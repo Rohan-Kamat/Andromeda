@@ -9,8 +9,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
-from ._parser import Parser
-from .indexer import Websites
+from andromeda.parser import Parser
+from andromeda.indexer import Websites, InvertedIndex, Summary
 
 
 logger = logging.getLogger(__name__)
@@ -93,6 +93,12 @@ def flush():
     logging.info("Flushing the database")
     websites = Websites()
     websites.flush()
+
+    inverted_index = InvertedIndex()
+    inverted_index.flush()
+
+    summary = Summary()
+    summary.flush()
 
 cli.add_command(start)
 cli.add_command(flush)

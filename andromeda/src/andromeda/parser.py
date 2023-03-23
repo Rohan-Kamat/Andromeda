@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 from nltk.stem import PorterStemmer
 
-from .indexer import Websites
+from andromeda.indexer import Websites
 
 
 logger = logging.getLogger(__name__)
