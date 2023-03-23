@@ -7,14 +7,14 @@ from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 from nltk.stem import PorterStemmer
 
-from indexer import Indexer
+from indexer import Websites
 
 
 logger = logging.getLogger(__name__)
 
 class Parser:
     def __init__(self):
-        self.indexer = Indexer()
+        self.websites = Websites()
 
         self.porter_stemmer = PorterStemmer()
 
@@ -53,8 +53,8 @@ class Parser:
         try:
             lang = soup.html['lang']
             return lang
-        except Exception as err:
-            logging.error("Language 404: %s", err)
+        except Exception as error:
+            logging.error("Language 404: %s", error)
             return None
 
     def parse(self, url, html):
@@ -64,8 +64,8 @@ class Parser:
         if lang is None or 'en' not in lang:
             return [], {}
 
-        if not self.indexer.exists(url):
-            self.indexer.insert_url(url)
+        if not self.websites.exists(url):
+            self.websites.insert_url(url)
 
         links = self.__get_links(soup)
 
@@ -73,11 +73,11 @@ class Parser:
 
         new_links = []
         for link in links:
-            refs = self.indexer.increment_num_references(link)
+            refs = self.websites.increment_num_references(link)
             if refs == 1:
                 new_links.append(link)
 
-        self.indexer.insert_data(url, word_freq, lang)
+        self.websites.insert_data(url, word_freq, lang)
 
         logging.info("Parsed %s", url)
 

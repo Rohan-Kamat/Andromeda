@@ -10,7 +10,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 from _parser import Parser
-from indexer import Indexer
+from indexer import Websites
 
 
 logger = logging.getLogger(__name__)
@@ -91,8 +91,8 @@ def get(url):
 @click.command(help="Flush the database")
 def flush():
     logging.info("Flushing the database")
-    indexer = Indexer()
-    indexer.flush()
+    websites = Websites()
+    websites.flush()
 
 cli.add_command(start)
 cli.add_command(flush)
