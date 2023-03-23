@@ -2,6 +2,7 @@
 
 from queue import Queue
 import sys
+import threading
 
 import click
 from selenium import webdriver
@@ -17,9 +18,14 @@ CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
 INITIAL_LINKS = [
     'https://www.wikipedia.org/'
 ]
+link_queue = Queue()
+for link in INITIAL_LINKS:
+    link_queue.put(link)
 
 class Crawler:
-    def __init__(self, chromedriver_path=CHROMEDRIVER_PATH, initial_links=INITIAL_LINKS):
+    def __init__(self, id, chromedriver_path=CHROMEDRIVER_PATH):
+        self.id = id
+
         self.parser = Parser()
 
         options = Options()
@@ -27,9 +33,10 @@ class Crawler:
         options.add_argument("--headless")
         self.driver = webdriver.Chrome(service=Service(chromedriver_path), options=options)
 
-        self.link_queue = Queue()
-        for link in initial_links:
-            self.link_queue.put(link)
+        global link_queue
+
+    def log(self, msg):
+        print(f"Crawler {self.id}: {msg}")
 
     def get(self, url: str):
         self.driver.get(url)
@@ -38,28 +45,34 @@ class Crawler:
 
     def run(self):
         while True:
-            link = self.link_queue.get()
-            print(link)
+            link = link_queue.get()
+            self.log(f"Getting {link}")
 
             page = self.get(link)
 
             new_links, _ = self.parser.parse(link, page)
             for link in new_links:
-                self.link_queue.put(link)
-            print(self.link_queue.qsize())
+                link_queue.put(link)
 
-            if self.link_queue.empty():
-                sys.exit(0)
-
+def start_crawler(id):
+    print(f"Starting Crawler#{id}")
+    crawler = Crawler(id)
+    crawler.run()
 
 @click.group()
 def cli():
     pass
 
 @click.command(help="Start the crawler")
-def start():
-    crawler = Crawler()
-    crawler.run()
+@click.option('--n_thread', type=int, help="Number of threads")
+def start(n_thread):
+    threads = [threading.Thread(target=start_crawler, args=(id,)) for id in range(n_thread)]
+
+    for thread in threads:
+        thread.start()
+
+    for thread in threads:
+        thread.join()
 
 @click.command(help="Flush the database")
 def flush():
