@@ -2,6 +2,7 @@
 
 from queue import Queue
 import threading
+import logging
 
 import click
 from selenium import webdriver
@@ -12,6 +13,15 @@ from _parser import Parser
 from indexer import Indexer
 
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    filename='andromeda.log',
+    filemode='w+',
+    format='%(asctime)s %(msecs)d %(pathname)s %(threadName)s %(levelname)s %(message)s',
+    datefmt='%H:%M:%S',
+    level=logging.INFO
+)
+
 CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
 
 INITIAL_LINKS = [
@@ -20,6 +30,7 @@ INITIAL_LINKS = [
 link_queue = Queue()
 for link in INITIAL_LINKS:
     link_queue.put(link)
+logging.info("Initialising link_queue with INITIAL_LINKS: %s", INITIAL_LINKS)
 
 class Crawler:
     def __init__(self, crawler_id, chromedriver_path=CHROMEDRIVER_PATH):
@@ -32,8 +43,7 @@ class Crawler:
         options.add_argument("--headless")
         self.driver = webdriver.Chrome(service=Service(chromedriver_path), options=options)
 
-    def log(self, msg):
-        print(f"Crawler {self.crawler_id}: {msg}")
+        logging.info("Initalised")
 
     def get(self, url: str):
         self.driver.get(url)
@@ -43,16 +53,17 @@ class Crawler:
     def run(self):
         while True:
             get_link = link_queue.get()
-            self.log(f"Getting {get_link}")
+            logging.info("The global link_queue has %i url(s)", link_queue.qsize())
+            logging.info("Getting %s", get_link)
 
             page = self.get(get_link)
+            logging.info("Downloaded %s", get_link)
 
             new_links, _ = self.parser.parse(get_link, page)
             for new_link in new_links:
                 link_queue.put(new_link)
 
 def start_crawler(crawler_id):
-    print(f"Starting Crawler#{crawler_id}")
     crawler = Crawler(crawler_id)
     crawler.run()
 
@@ -63,7 +74,7 @@ def cli():
 @click.command(help="Start the crawler")
 @click.option('--n_thread', type=int, help="Number of threads", default=1)
 def start(n_thread):
-    threads = [threading.Thread(target=start_crawler, args=(crawler_id,)) for crawler_id in range(n_thread)]
+    threads = [threading.Thread(target=start_crawler, args=(crawler_id,), name=f'Crawler#{crawler_id}') for crawler_id in range(n_thread)]
 
     for thread in threads:
         thread.start()
@@ -79,12 +90,14 @@ def get(url):
 
 @click.command(help="Flush the database")
 def flush():
+    logging.info("Flushing the database")
     indexer = Indexer()
     indexer.flush()
 
 cli.add_command(start)
 cli.add_command(flush)
 cli.add_command(get)
+
 
 if __name__ == '__main__':
     cli()

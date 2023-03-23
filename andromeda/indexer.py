@@ -1,9 +1,12 @@
 import json
 import os
+import logging
 
 from bson.json_util import dumps
 import pymongo
 
+
+logger = logging.getLogger(__name__)
 
 class Indexer:
     def __init__(
@@ -15,11 +18,11 @@ class Indexer:
             database='test',
     ):
         try:
-            print("Initializing DB connection...")
+            logging.info("Initializing DB connection...")
             self.client = pymongo.MongoClient(f'mongodb://{user}:{passwd}@{host}:{port}')
             self.database = self.client[database]
             self.websites = self.database['websites']
-            print("DB connection established!")
+            logging.info("DB connection established!")
         except Exception as error:
             raise Exception from error
 
@@ -48,7 +51,7 @@ class Indexer:
         try:
             self.websites.drop()
         except Exception as err:
-            print(f"Error: {err}")
+            logging.error("Unable to flush database: %s", err)
 
     def insert_url(self, url: str):
         if not self.exists(url):

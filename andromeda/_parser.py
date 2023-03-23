@@ -1,5 +1,6 @@
 from urllib.parse import urlparse, urljoin
 import re
+import logging
 
 from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import CountVectorizer
@@ -8,6 +9,8 @@ from nltk.stem import PorterStemmer
 
 from indexer import Indexer
 
+
+logger = logging.getLogger(__name__)
 
 class Parser:
     def __init__(self):
@@ -51,7 +54,7 @@ class Parser:
             lang = soup.html['lang']
             return lang
         except Exception as err:
-            print(f"Language not found: {err}")
+            logging.error("Language 404: %s", err)
             return None
 
     def parse(self, url, html):
@@ -75,5 +78,7 @@ class Parser:
                 new_links.append(link)
 
         self.indexer.insert_data(url, word_freq, lang)
+
+        logging.info("Parsed %s", url)
 
         return new_links, word_freq
