@@ -43,7 +43,7 @@ class Parser:
             matrix.toarray(),
             columns=vectorizer.get_feature_names_out()
         ).to_dict('dict')
-        word_freq = {self.porter_stemmer.stem(word): stats[0] for word, stats in word_freq.items() if self.__is_valid(word)}
+        word_freq = {self.porter_stemmer.stem(str(word)): stats[0] for word, stats in word_freq.items() if self.__is_valid(word)}
         return word_freq
 
     def __get_language(self, soup):

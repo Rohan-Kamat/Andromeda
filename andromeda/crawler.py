@@ -71,6 +71,12 @@ def start(n_thread):
     for thread in threads:
         thread.join()
 
+@click.command(help="Get a single link")
+@click.option('--url', type=str, help="URL to be crawled")
+def get(url):
+    crawler = Crawler(0)
+    crawler.get(url)
+
 @click.command(help="Flush the database")
 def flush():
     indexer = Indexer()
@@ -78,6 +84,7 @@ def flush():
 
 cli.add_command(start)
 cli.add_command(flush)
+cli.add_command(get)
 
 if __name__ == '__main__':
     cli()
