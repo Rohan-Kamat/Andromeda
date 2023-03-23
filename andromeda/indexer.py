@@ -47,8 +47,8 @@ class Indexer:
     def flush(self) -> None:
         try:
             self.websites.drop()
-        except Exception as e:
-            print(f"Error: {e}")
+        except Exception as err:
+            print(f"Error: {err}")
 
     def insert_url(self, url: str):
         if not self.exists(url):

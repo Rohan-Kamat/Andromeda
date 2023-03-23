@@ -30,11 +30,23 @@ class Parser:
         word_freq = {word: stats[0] for word, stats in word_freq.items()}
         return word_freq
 
+    def __get_language(self, soup):
+        try:
+            lang = soup.html['lang']
+            return lang
+        except Exception as err:
+            print(f"Language not found: {err}")
+            return None
+
     def parse(self, url, html):
         if not self.indexer.exists(url):
             self.indexer.insert_url(url)
 
         soup = BeautifulSoup(html, 'html.parser')
+
+        lang = self.__get_language(soup)
+        if lang is None or 'en' not in lang:
+            return [], {}
 
         links = self.__get_links(soup)
 

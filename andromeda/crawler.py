@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from queue import Queue
-import sys
 import threading
 
 import click
@@ -23,8 +22,8 @@ for link in INITIAL_LINKS:
     link_queue.put(link)
 
 class Crawler:
-    def __init__(self, id, chromedriver_path=CHROMEDRIVER_PATH):
-        self.id = id
+    def __init__(self, crawler_id, chromedriver_path=CHROMEDRIVER_PATH):
+        self.crawler_id = crawler_id
 
         self.parser = Parser()
 
@@ -33,10 +32,8 @@ class Crawler:
         options.add_argument("--headless")
         self.driver = webdriver.Chrome(service=Service(chromedriver_path), options=options)
 
-        global link_queue
-
     def log(self, msg):
-        print(f"Crawler {self.id}: {msg}")
+        print(f"Crawler {self.crawler_id}: {msg}")
 
     def get(self, url: str):
         self.driver.get(url)
@@ -45,18 +42,18 @@ class Crawler:
 
     def run(self):
         while True:
-            link = link_queue.get()
-            self.log(f"Getting {link}")
+            get_link = link_queue.get()
+            self.log(f"Getting {get_link}")
 
-            page = self.get(link)
+            page = self.get(get_link)
 
-            new_links, _ = self.parser.parse(link, page)
-            for link in new_links:
-                link_queue.put(link)
+            new_links, _ = self.parser.parse(get_link, page)
+            for new_link in new_links:
+                link_queue.put(new_link)
 
-def start_crawler(id):
-    print(f"Starting Crawler#{id}")
-    crawler = Crawler(id)
+def start_crawler(crawler_id):
+    print(f"Starting Crawler#{crawler_id}")
+    crawler = Crawler(crawler_id)
     crawler.run()
 
 @click.group()
@@ -66,7 +63,7 @@ def cli():
 @click.command(help="Start the crawler")
 @click.option('--n_thread', type=int, help="Number of threads")
 def start(n_thread):
-    threads = [threading.Thread(target=start_crawler, args=(id,)) for id in range(n_thread)]
+    threads = [threading.Thread(target=start_crawler, args=(crawler_id,)) for crawler_id in range(n_thread)]
 
     for thread in threads:
         thread.start()
