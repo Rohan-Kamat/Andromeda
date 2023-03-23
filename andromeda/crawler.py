@@ -9,6 +9,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 from _parser import Parser
+from indexer import Indexer
 
 
 CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
@@ -18,10 +19,7 @@ INITIAL_LINKS = [
 ]
 
 class Crawler:
-    def __init__(self, chromedriver_path=CHROMEDRIVER_PATH, initial_links=None):
-        if initial_links is None:
-            initial_links = INITIAL_LINKS
-
+    def __init__(self, chromedriver_path=CHROMEDRIVER_PATH, initial_links=INITIAL_LINKS):
         self.parser = Parser()
 
         options = Options()
@@ -60,13 +58,16 @@ def cli():
 
 @click.command(help="Start the crawler")
 def start():
-    crawler = Crawler(
-        chromedriver_path=CHROMEDRIVER_PATH,
-        initial_links=INITIAL_LINKS
-    )
+    crawler = Crawler()
     crawler.run()
 
+@click.command(help="Flush the database")
+def flush():
+    indexer = Indexer()
+    indexer.flush()
+
 cli.add_command(start)
+cli.add_command(flush)
 
 if __name__ == '__main__':
     cli()

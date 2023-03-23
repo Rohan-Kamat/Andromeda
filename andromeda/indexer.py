@@ -14,7 +14,6 @@ class Indexer:
             port=27017,
             database='test',
     ):
-        print(host)
         try:
             print("Initializing DB connection...")
             self.client = pymongo.MongoClient(f'mongodb://{user}:{passwd}@{host}:{port}')
@@ -44,6 +43,12 @@ class Indexer:
             {'$inc': {'references': 1}}
         )
         return self.get(url)['references']
+
+    def flush(self) -> None:
+        try:
+            self.websites.drop()
+        except Exception as e:
+            print(f"Error: {e}")
 
     def insert_url(self, url: str):
         if not self.exists(url):
