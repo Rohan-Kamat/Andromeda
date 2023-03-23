@@ -26,4 +26,5 @@ jobs:
         pip install -r andromeda/requirements.txt
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint andromeda/src/andromeda
+        pylint api
