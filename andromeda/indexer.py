@@ -14,7 +14,7 @@ class Indexer:
             port=27017,
             database='test',
     ):
-        print(host)
+        print("host",host)
         try:
             self.cache = redis.Redis( host='localhost', port=6379,db=0,password=None,decode_responses=True)
             if self.cache.ping():
@@ -25,12 +25,14 @@ class Indexer:
             self.websites = self.database['websites']
             self.index = self.database['index']
             print("DB connection established!")
+
         except Exception as error:
             raise Exception from error
 
     def exists(self, url: str) -> bool:
-         #print("Checking exists",self.cache.exists(url),"here")
+         print("Checking exists",self.cache.get(url),"here")
          website = self.get(url)
+        #  print(website)
          return website is not None
     def word_exists(self, word: str) -> bool:
         word_dat = self.word_get(word)
@@ -67,15 +69,18 @@ class Indexer:
         return website[0] if len(website) == 1 else None
 
     def increment_num_references(self, url: str) -> bool:
-        print(self.cache.get(url))
+        print("cached url" ,self.cache.get(url))
         if not self.exists(url):
             self.insert_url(url)
+            
         self.cache.set(url,'False1')
         self.websites.update_one(
             {'url': url},
             {'$inc': {'references': 1}}
         )
-        return self.get(url)['references']
+        
+        print("References", self.websites.find_one({"url":url})['references'])
+        return self.websites.find_one({"url":url})['references']
     
     def crawler_checker(self, url: str):
         return self.get(url)['crawled']
@@ -83,6 +88,8 @@ class Indexer:
     def insert_url(self, url: str):
         #print("Checking insert url",self.cache.exists(url),"here")
         if not self.exists(url):
+            print("Inserting url ",url)
+            print(self.websites.find_one({'url':url}))
             self.websites.insert_one({
                 'url': url,
                 'references': 0,

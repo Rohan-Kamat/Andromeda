@@ -61,7 +61,7 @@ class Crawler:
     def run(self):
         while True:
             link = self.link_queue.get()
-            print(link)
+            print("link main ",link)
 
             page = self.get(link)
 
@@ -71,7 +71,7 @@ class Crawler:
             for new_link in new_links:
                 self.link_queue.put(new_link)
 
-            print(self.link_queue.qsize())
+            print("queue size " ,self.link_queue.qsize())
 
             if self.link_queue.empty():
                 sys.exit(0)
