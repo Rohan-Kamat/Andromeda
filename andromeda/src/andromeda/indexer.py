@@ -46,9 +46,9 @@ class InvertedIndex(Database):
     def __init__(self):
         super().__init__('inverted_index')
 
-    def get(self, word: str):
+    def get(self, key: str):
         data = json.loads(dumps(self.collection.find(
-            {'word': word},
+            {'word': key},
             {}
         )))
         assert len(data) <= 1
@@ -75,9 +75,9 @@ class Websites(Database):
 
         super().__init__('websites')
 
-    def get(self, url: str):
+    def get(self, key: str):
         data = json.loads(dumps(self.collection.find(
-            {'url': url},
+            {'url': key},
             {}
         )))
         assert len(data) <= 1

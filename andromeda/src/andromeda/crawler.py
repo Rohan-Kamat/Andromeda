@@ -9,8 +9,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
-from _parser import Parser
-from indexer import Websites
+from ._parser import Parser
+from .indexer import Websites
 
 
 logger = logging.getLogger(__name__)

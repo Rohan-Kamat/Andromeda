@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 from nltk.stem import PorterStemmer
 
-from indexer import Websites
+from .indexer import Websites
 
 
 logger = logging.getLogger(__name__)
@@ -37,16 +37,14 @@ class Parser:
 
         return True
 
-    def __get_word_frequency(self, soup):
-        text = soup.get_text()
-        # Remove stop words
+    def get_word_frequency(self, text):
         vectorizer = CountVectorizer(stop_words='english')
         matrix = vectorizer.fit_transform([text])
-        word_freq = pd.DataFrame(
+        data_frame = pd.DataFrame(
             matrix.toarray(),
             columns=vectorizer.get_feature_names_out()
         ).to_dict('dict')
-        word_freq = {self.porter_stemmer.stem(str(word)): stats[0] for word, stats in word_freq.items() if self.__is_valid(word)}
+        word_freq = {self.porter_stemmer.stem(str(word)): stats[0] for word, stats in data_frame.items() if self.__is_valid(word)}
         return word_freq
 
     def __get_language(self, soup):
@@ -69,7 +67,8 @@ class Parser:
 
         links = self.__get_links(soup)
 
-        word_freq = self.__get_word_frequency(soup)
+        text = soup.get_text()
+        word_freq = self.get_word_frequency(text)
 
         new_links = []
         for link in links:
