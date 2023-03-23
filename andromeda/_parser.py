@@ -4,6 +4,7 @@ import re
 from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
+from nltk.stem import PorterStemmer
 
 from indexer import Indexer
 
@@ -12,6 +13,8 @@ class Parser:
     def __init__(self):
         self.indexer = Indexer()
 
+        self.porter_stemmer = PorterStemmer()
+
     def __get_links(self, soup):
         links = []
         for link in soup.find_all('a', attrs={'href': re.compile("^https://")}):
@@ -19,15 +22,28 @@ class Parser:
             links.append(urljoin(url, urlparse(url).path))
         return links
 
+    def __is_valid(self, word: str) -> bool:
+        # Must contain only alphabets and digits
+        pattern = re.compile('^[a-zA-Z0-9]+$')
+        if not pattern.match(word):
+            return False
+
+        # Must contain atleast one alphabet
+        if re.search('[a-zA-Z]', word) is None:
+            return False
+
+        return True
+
     def __get_word_frequency(self, soup):
         text = soup.get_text()
+        # Remove stop words
         vectorizer = CountVectorizer(stop_words='english')
         matrix = vectorizer.fit_transform([text])
         word_freq = pd.DataFrame(
             matrix.toarray(),
             columns=vectorizer.get_feature_names_out()
         ).to_dict('dict')
-        word_freq = {word: stats[0] for word, stats in word_freq.items()}
+        word_freq = {self.porter_stemmer.stem(word): stats[0] for word, stats in word_freq.items() if self.__is_valid(word)}
         return word_freq
 
     def __get_language(self, soup):
