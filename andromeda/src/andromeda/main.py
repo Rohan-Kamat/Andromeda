@@ -10,14 +10,14 @@ from andromeda.runtime import CrawlerRuntime, ParserRuntime
 
 
 INITIAL_LINKS = [
-    'https://www.wikipedia.org/'
+    'https://www.wikipedia.org'
 ]
-try:
-    with open(PROGRESS_FILE, 'rb') as save_file:
-        logging.info("Loading INITIAL_LINKS from %s", PROGRESS_FILE)
-        INITIAL_LINKS = pickle.load(save_file)
-except Exception as error:
-    pass
+# try:
+#     with open(PROGRESS_FILE, 'rb') as save_file:
+#         logging.info("Loading INITIAL_LINKS from %s", PROGRESS_FILE)
+#         INITIAL_LINKS = pickle.load(save_file)
+# except Exception as error:
+#     pass
 
 link_queue = Queue()
 for link in INITIAL_LINKS:

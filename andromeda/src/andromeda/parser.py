@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 from nltk.stem import PorterStemmer
 
-from andromeda.indexer import Websites
+from andromeda.indexer import Websites, Summary
 
 
 logger = logging.getLogger(__name__)
@@ -15,15 +15,16 @@ logger = logging.getLogger(__name__)
 class Parser:
     def __init__(self):
         self.websites = Websites()
+        self.summary = Summary()
 
         self.porter_stemmer = PorterStemmer()
 
     def __get_links(self, soup):
-        links = []
+        links = set()
         for link in soup.find_all('a', attrs={'href': re.compile("^https://")}):
             url = link['href']
-            links.append(urljoin(url, urlparse(url).path))
-        return links
+            links.add(urljoin(url, urlparse(url).path).strip('/'))
+        return list(links)
 
     def __is_valid(self, word: str) -> bool:
         # Must contain only alphabets and digits
@@ -59,13 +60,14 @@ class Parser:
         while True:
             logging.info("Waiting for page")
             (url, html) = data_queue.get()
-            logging.info("Parsing %s", url)
 
+            logging.info("Parsing %s", url)
             soup = BeautifulSoup(html, 'html.parser')
 
             lang = self.__get_language(soup)
             if lang is None or 'en' not in lang:
-                return [], {}
+                self.summary.increment('non_english')
+                continue
 
             if not self.websites.exists(url):
                 self.websites.insert_url(url)
@@ -86,3 +88,4 @@ class Parser:
             for new_link in new_links:
                 link_queue.put(new_link)
             logging.info("The global link_queue has %i url(s)", link_queue.qsize())
+            self.summary.increment('parsed')
