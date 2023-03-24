@@ -8,6 +8,6 @@ setup(
   name='andromeda',
   version='1.0',
   package_dir={'':'src'},
-  packackages=find_packages('src'),
+  packages=find_packages('src'),
   install_requires=reqs
 )
