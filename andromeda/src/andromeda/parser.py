@@ -1,6 +1,7 @@
 from urllib.parse import urlparse, urljoin
 import re
 import logging
+import atexit
 
 from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import CountVectorizer

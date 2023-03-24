@@ -2,7 +2,6 @@
 
 from queue import Queue
 import logging
-import atexit
 import pickle
 
 from selenium import webdriver
@@ -24,21 +23,6 @@ logging.basicConfig(
 
 CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
 
-INITIAL_LINKS = [
-    'https://www.wikipedia.org/'
-]
-try:
-    with open(PROGRESS_FILE, 'rb') as save_file:
-        logging.info("Loading INITIAL_LINKS from %s", PROGRESS_FILE)
-        INITIAL_LINKS = pickle.load(save_file)
-except Exception as error:
-    pass
-
-link_queue = Queue()
-for link in INITIAL_LINKS:
-    link_queue.put(link)
-logging.info("Initialising link_queue with INITIAL_LINKS: %s", INITIAL_LINKS)
-
 class Crawler:
     def __init__(self, crawler_id, chromedriver_path=CHROMEDRIVER_PATH):
         self.crawler_id = crawler_id
@@ -50,7 +34,6 @@ class Crawler:
         options.add_argument("--headless")
         self.driver = webdriver.Chrome(service=Service(chromedriver_path), options=options)
 
-        atexit.register(exit_handler)
         logging.info("Initalised")
 
     def get(self, url: str):
@@ -58,7 +41,7 @@ class Crawler:
         page = self.driver.page_source
         return page
 
-    def run(self):
+    def run(self, link_queue):
         while True:
             try:
                 get_link = link_queue.get()
@@ -76,7 +59,3 @@ class Crawler:
                 logging.debug(error)
 
                 link_queue.put(get_link)
-
-def exit_handler():
-    with open(PROGRESS_FILE, 'wb') as save_file:
-        pickle.dump(list(link_queue.queue), save_file)
