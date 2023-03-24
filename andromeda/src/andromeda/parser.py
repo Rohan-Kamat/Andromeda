@@ -1,7 +1,6 @@
 from urllib.parse import urlparse, urljoin
 import re
 import logging
-import atexit
 
 from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import CountVectorizer
@@ -56,29 +55,34 @@ class Parser:
             logging.debug(error)
             return None
 
-    def parse(self, url, html):
-        soup = BeautifulSoup(html, 'html.parser')
+    def run(self, data_queue, link_queue):
+        while True:
+            logging.info("Waiting for page")
+            (url, html) = data_queue.get()
+            logging.info("Parsing %s", url)
 
-        lang = self.__get_language(soup)
-        if lang is None or 'en' not in lang:
-            return [], {}
+            soup = BeautifulSoup(html, 'html.parser')
 
-        if not self.websites.exists(url):
-            self.websites.insert_url(url)
+            lang = self.__get_language(soup)
+            if lang is None or 'en' not in lang:
+                return [], {}
 
-        links = self.__get_links(soup)
+            if not self.websites.exists(url):
+                self.websites.insert_url(url)
 
-        text = soup.get_text()
-        word_freq = self.get_word_frequency(text)
+            links = self.__get_links(soup)
 
-        new_links = []
-        for link in links:
-            refs = self.websites.increment_num_references(link)
-            if refs == 1:
-                new_links.append(link)
+            text = soup.get_text()
+            word_freq = self.get_word_frequency(text)
 
-        self.websites.insert_data(url, word_freq, lang)
+            new_links = []
+            for link in links:
+                refs = self.websites.increment_num_references(link)
+                if refs == 1:
+                    new_links.append(link)
 
-        logging.info("Parsed %s", url)
+            self.websites.insert_data(url, word_freq, lang)
 
-        return new_links, word_freq
+            for new_link in new_links:
+                link_queue.put(new_link)
+            logging.info("The global link_queue has %i url(s)", link_queue.qsize())

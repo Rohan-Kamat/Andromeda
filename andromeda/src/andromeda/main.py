@@ -1,14 +1,12 @@
-import threading
-import atexit
 import pickle
 from queue import Queue
 import logging
 
 import click
 
-from andromeda.crawler import Crawler
 from andromeda.indexer import Websites, InvertedIndex, Summary
 from andromeda.config import PROGRESS_FILE
+from andromeda.runtime import CrawlerRuntime, ParserRuntime
 
 
 INITIAL_LINKS = [
@@ -26,44 +24,30 @@ for link in INITIAL_LINKS:
     link_queue.put(link)
 logging.info("Initialising link_queue with INITIAL_LINKS: %s", INITIAL_LINKS)
 
-def start_crawler(crawler_id):
-    crawler = Crawler(crawler_id)
-    crawler.run(link_queue)
-
-def exit_handler():
-    with open(PROGRESS_FILE, 'wb') as save_file:
-        pickle.dump(list(link_queue.queue), save_file)
-
+data_queue = Queue()
 
 @click.group()
 def cli():
     pass
 
 @click.command(help="Start the crawler")
-@click.option('--n_thread', type=int, help="Number of threads", default=1)
-def start(n_thread):
-    atexit.register(exit_handler)
+@click.option('--n_crawler', type=int, help="Number of crawlers", default=1)
+@click.option('--n_parser', type=int, help="Number of parsers", default=1)
+def start(n_crawler, n_parser):
+    parser = ParserRuntime(n_parser, link_queue, data_queue)
+    parser.start()
 
-    threads = [threading.Thread(target=start_crawler, args=(crawler_id,), name=f'Crawler#{crawler_id}') for crawler_id in range(n_thread)]
+    crawler = CrawlerRuntime(n_crawler, link_queue, data_queue)
+    crawler.start()
 
-    for thread in threads:
-        thread.start()
-
-    for thread in threads:
-        thread.join()
-
-    
+    parser.join()
+    crawler.join()
 
 @click.command(help="Flush the database")
 def flush():
-    websites = Websites()
-    websites.flush()
-
-    inverted_index = InvertedIndex()
-    inverted_index.flush()
-
-    summary = Summary()
-    summary.flush()
+    collections = [Websites(), InvertedIndex(), Summary()]
+    for collection in collections:
+        collection.flush()
 
 cli.add_command(start)
 cli.add_command(flush)
