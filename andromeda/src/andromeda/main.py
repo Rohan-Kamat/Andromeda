@@ -3,10 +3,13 @@ from queue import Queue
 import logging
 
 import click
+from bs4 import BeautifulSoup
 
 from andromeda.indexer import Websites, InvertedIndex, Summary
 from andromeda.config import PROGRESS_FILE
 from andromeda.runtime import CrawlerRuntime, ParserRuntime
+from andromeda.crawler import Crawler
+from andromeda.parser import Parser
 
 
 INITIAL_LINKS = [
@@ -49,8 +52,30 @@ def flush():
     for collection in collections:
         collection.flush()
 
+@click.command(help="")
+@click.option('--url', type=str, help="URL to be mocked")
+def debug(url):
+    crawler = Crawler()
+    html = crawler.get(url)
+    # print(html)
+
+    soup = BeautifulSoup(html, 'html.parser')
+
+    parser = Parser()
+
+    lang = parser.get_language(soup)
+    print(lang)
+
+    links = parser.get_links(soup)
+
+    text = soup.get_text()
+    print(text)
+    word_freq = parser.get_word_frequency(text)
+    # print(word_freq)
+
 cli.add_command(start)
 cli.add_command(flush)
+cli.add_command(debug)
 
 if __name__ == '__main__':
     cli()

@@ -19,7 +19,7 @@ class Parser:
 
         self.porter_stemmer = PorterStemmer()
 
-    def __get_links(self, soup):
+    def get_links(self, soup):
         links = set()
         for link in soup.find_all('a', attrs={'href': re.compile("^https://")}):
             url = link['href']
@@ -48,7 +48,7 @@ class Parser:
         word_freq = {self.porter_stemmer.stem(str(word)): stats[0] for word, stats in data_frame.items() if self.__is_valid(word)}
         return word_freq
 
-    def __get_language(self, soup):
+    def get_language(self, soup):
         try:
             lang = soup.html['lang']
             return lang
@@ -64,7 +64,7 @@ class Parser:
             logging.info("Parsing %s", url)
             soup = BeautifulSoup(html, 'html.parser')
 
-            lang = self.__get_language(soup)
+            lang = self.get_language(soup)
             if lang is None or 'en' not in lang:
                 self.summary.increment('non_english')
                 continue
@@ -72,7 +72,7 @@ class Parser:
             if not self.websites.exists(url):
                 self.websites.insert_url(url)
 
-            links = self.__get_links(soup)
+            links = self.get_links(soup)
 
             text = soup.get_text()
             word_freq = self.get_word_frequency(text)
