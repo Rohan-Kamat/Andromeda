@@ -57,21 +57,32 @@ class Summary(Database):
         assert len(data) <= 1
         return data[0]['value'] if len(data) == 1 else None
 
-    def update(self, key, value):
-        if not self.exists(key):
-            self.collection.insert_one({
-                'key': key,
-                'value': 0,
-            })
-
+    def add(self, key, value=0):
         self.collection.update_one(
             {'key': key},
-            {'$set': {'value': value}}
+            {'$set': {'value': value}},
+            upsert=True
+        )
+
+    def update(self, key, value):
+        self.collection.update_one(
+            {'key': key},
+            {'$set': {'value': value}},
+            upsert=True
+        )
+
+    def increment(self, key):
+        self.collection.update_one(
+            {'key': key},
+            {'$inc': {'value': 1}},
+            upsert=True
         )
 
 class InvertedIndex(Database):
     def __init__(self):
         super().__init__('inverted_index')
+
+        self.collection.create_index('word', unique=True)
 
     def get(self, key: str):
         data = json.loads(dumps(self.collection.find(
@@ -82,11 +93,11 @@ class InvertedIndex(Database):
         return data[0] if len(data) == 1 else None
 
     def insert_word(self, word):
-        if not self.exists(word):
-            self.collection.insert_one({
-                'word': word,
-                'index': [],
-            })
+        self.collection.update_one(
+            {'word': word},
+            {'$set': {'index': []}},
+            upsert=True
+        )
 
     def update_index(self, word, url, freq):
         self.insert_word(word)
@@ -98,36 +109,34 @@ class InvertedIndex(Database):
 
 class Websites(Database):
     def __init__(self):
+        super().__init__('websites')
+
         self.index = InvertedIndex()
         self.summary = Summary()
 
-        super().__init__('websites')
+        self.collection.create_index('url', unique=True)
 
     def get(self, key: str):
         data = json.loads(dumps(self.collection.find(
             {'url': key},
             {}
         )))
-        assert len(data) <= 1
         return data[0] if len(data) == 1 else None
 
     def increment_num_references(self, url: str) -> bool:
-        if not self.exists(url):
-            self.insert_url(url)
         self.collection.update_one(
             {'url': url},
-            {'$inc': {'references': 1}}
+            {'$inc': {'references': 1}},
+            upsert=True
         )
         return self.get(url)['references']
 
     def insert_url(self, url: str):
-        if not self.exists(url):
-            self.collection.insert_one({
-                'url': url,
-                'references': 0,
-                'data': None,
-                'crawled': False,
-            })
+        self.collection.update_one(
+            {'url': url},
+            {'$set': {'references': 0}},
+            upsert=True
+        )
 
     def insert_data(self, url: str, data: dict, lang: str):
         for word, freq in data.items():
@@ -141,6 +150,6 @@ class Websites(Database):
         assert self.exists(url)
         self.collection.update_one(
             {'url': url},
-            {'$set': {'data': data, 'crawled': True, 'lang': lang, 'length': length}}
+            {'$set': {'lang': lang, 'length': length}}
         )
         return self.get(url)
