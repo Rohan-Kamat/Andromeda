@@ -6,6 +6,8 @@ import abc
 from bson.json_util import dumps
 import pymongo
 
+from andromeda.config import FREQUENCY_THRESHOLD
+
 
 logger = logging.getLogger(__name__)
 
@@ -139,10 +141,12 @@ class Websites(Database):
         )
 
     def insert_data(self, url: str, data: dict, lang: str):
+        length = 0
         for word, freq in data.items():
-            self.index.update_index(word, url, freq)
+            length += freq
+            if freq > FREQUENCY_THRESHOLD:
+                self.index.update_index(word, url, freq)
 
-        length = sum(data.values())
         total_length = self.summary.get('total_length') or 0
         total_length += length
         self.summary.update('total_length', total_length)
