@@ -19,8 +19,9 @@ def cli():
 @click.command(help="Start the crawler")
 @click.option('--n_crawler', type=int, help="Number of crawlers", default=1)
 @click.option('--n_parser', type=int, help="Number of parsers", default=1)
-@click.option('--initial_links', type=list, help="Initial list of links to begin crawling", default=['https://www.wikipedia.org'])
+@click.option('--initial_links', type=str, multiple=True, help="Initial list of links to begin crawling", default=['https://www.wikipedia.org'])
 def start(n_crawler, n_parser, initial_links):
+    initial_links = list(initial_links)
     # try:
     #     with open(PROGRESS_FILE, 'rb') as save_file:
     #         logging.info("Loading INITIAL_LINKS from %s", PROGRESS_FILE)
