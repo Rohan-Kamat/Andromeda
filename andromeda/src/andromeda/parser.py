@@ -58,34 +58,40 @@ class Parser:
 
     def run(self, data_queue, link_queue):
         while True:
-            logging.info("Waiting for page")
-            (url, html) = data_queue.get()
+            try:
+                logging.info("Waiting for page")
+                (url, html) = data_queue.get()
 
-            logging.info("Parsing %s", url)
-            soup = BeautifulSoup(html, 'html.parser')
+                logging.info("Parsing %s", url)
+                soup = BeautifulSoup(html, 'html.parser')
 
-            lang = self.get_language(soup)
-            if lang is None or 'en' not in lang:
-                self.summary.increment('non_english')
-                continue
+                lang = self.get_language(soup)
+                if lang is None or 'en' not in lang:
+                    self.summary.increment('non_english')
+                    continue
 
-            if not self.websites.exists(url):
-                self.websites.insert_url(url)
+                if not self.websites.exists(url):
+                    self.websites.insert_url(url)
 
-            links = self.get_links(soup)
+                links = self.get_links(soup)
 
-            text = soup.get_text()
-            word_freq = self.get_word_frequency(text)
+                text = soup.get_text()
+                word_freq = self.get_word_frequency(text)
 
-            new_links = []
-            for link in links:
-                refs = self.websites.increment_num_references(link)
-                if refs == 1:
-                    new_links.append(link)
+                new_links = []
+                for link in links:
+                    refs = self.websites.increment_num_references(link)
+                    if refs == 1:
+                        new_links.append(link)
 
-            self.websites.insert_data(url, word_freq, lang)
+                self.websites.insert_data(url, word_freq, lang)
 
-            for new_link in new_links:
-                link_queue.put(new_link)
-            logging.info("The global link_queue has %i url(s)", link_queue.qsize())
-            self.summary.increment('parsed')
+                for new_link in new_links:
+                    link_queue.put(new_link)
+                logging.info("The global link_queue has %i url(s)", link_queue.qsize())
+                self.summary.increment('parsed')
+            except Exception as error:
+                logging.error("Failed to parse %s: %s", url, str(error).split('\n', maxsplit=1)[0])
+                logging.debug(error)
+
+                link_queue.put(url)
