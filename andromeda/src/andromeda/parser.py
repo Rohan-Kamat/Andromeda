@@ -78,7 +78,6 @@ class Parser:
 
                 lang = self.get_language(soup)
                 if lang is None or 'en' not in lang:
-                    print(lang)
                     self.summary.increment('non_english')
                     continue
 
