@@ -8,7 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
-from andromeda.config import LOG_FILE, DOWNLOAD_DIRECTORY
+from andromeda.config import LOG_FILE, DOWNLOAD_DIRECTORY, MAXIMUM_RETRIES
 from andromeda.indexer import Summary
 
 
@@ -50,8 +50,7 @@ class Crawler:
         )
 
         self.driver = webdriver.Chrome(options=options)
-        # self.driver.set_page_load_timeout(30)
-        self.driver.implicitly_wait(10)
+        self.driver.set_page_load_timeout(30)
 
         self.summary = Summary()
 
@@ -67,7 +66,7 @@ class Crawler:
         while True:
             try:
                 logging.info("Waiting for a URL")
-                get_link = link_queue.get()
+                (get_link, retries) = link_queue.get()
                 logging.info("Getting %s", get_link)
 
                 page = self.get(get_link)
@@ -79,4 +78,5 @@ class Crawler:
                 logging.error("Failed to get %s: %s", get_link, str(error).split('\n', maxsplit=1)[0])
                 logging.debug(error)
 
-                link_queue.put(get_link)
+                if retries < MAXIMUM_RETRIES:
+                    link_queue.put((get_link, retries + 1))
