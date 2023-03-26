@@ -31,8 +31,10 @@ class Parser:
         links = set()
         for link in soup.find_all('a'):
             try:
-                link = urlparse(link['href'])
-                link = urljoin(base_url, link.path) + ('?' if link.query != '' else '') + f'{link.query}'
+                link = link['href']
+                if not link.startswith('https://'):
+                    link = urlparse(link)
+                    link = urljoin(base_url, link.path) + ('?' if link.query != '' else '') + f'{link.query}'
                 link = link.strip('/')
                 links.add(link)
             except Exception as error:

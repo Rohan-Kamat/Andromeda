@@ -18,10 +18,10 @@ def run():
         detailed = True if 'detailed' in request.args else False
 
         ranker = BM25()
-        results = ranker.get_docs(query)[:5]
+        results = ranker.get_docs(query)
 
         if detailed:
-            results = [get_metadata(url) for url in results]
+            results = [get_metadata(url) for url in results[:5]]
 
         return results
 
