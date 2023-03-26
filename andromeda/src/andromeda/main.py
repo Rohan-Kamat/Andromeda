@@ -1,6 +1,7 @@
 import pickle
 from queue import Queue
 import logging
+from urllib.parse import urlparse, urljoin
 
 import click
 from bs4 import BeautifulSoup
@@ -69,14 +70,16 @@ def debug(url):
 
     lang = parser.get_language(soup)
 
-    links = parser.get_links(soup)
+    parsed_url = urlparse(url)
+    print(parsed_url)
+    links = parser.get_links(url, soup)
+    print(links)
 
     text = soup.get_text()
-    print(text)
+    # print(text)
     word_freq = parser.get_word_frequency(text)
-    print(word_freq)
+    # print(word_freq)
 
-    print(parser.get_links(soup))
 
 cli.add_command(start)
 cli.add_command(flush)

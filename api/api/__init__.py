@@ -5,7 +5,7 @@ from andromeda.ranker import BM25
 from api.utils import get_metadata
 
 
-def run(test_config=None):
+def run():
     app = Flask(__name__)
 
     @app.route('/', methods=['GET'])

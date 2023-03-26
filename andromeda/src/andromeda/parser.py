@@ -21,12 +21,24 @@ class Parser:
         self.stemmer = PorterStemmer()
         self.stop_words = set(stopwords.words('english'))
 
-    def get_links(self, soup):
+    def get_links(self, url, soup):
+        url = urlparse(url)
+        base_url = f'{url.scheme}://{url.hostname}'
+
+        if url.scheme != 'https':
+            return []
+
         links = set()
-        for link in soup.find_all('a', attrs={'href': re.compile("^https://")}):
-            url = link['href']
-            links.add(urljoin(url, urlparse(url).path).strip('/'))
-        return list(links)
+        for link in soup.find_all('a'):
+            try:
+                link = urlparse(link['href'])
+                link = urljoin(base_url, link.path) + ('?' if link.query != '' else '') + f'{link.query}'
+                link = link.strip('/')
+                links.add(link)
+            except Exception as error:
+                logging.error(error)
+        links = list(links)
+        return links
 
     def __is_valid(self, word: str) -> bool:
         if word in self.stop_words:
@@ -81,7 +93,7 @@ class Parser:
                 if not self.websites.exists(url):
                     self.websites.insert_url(url)
 
-                links = self.get_links(soup)
+                links = self.get_links(url, soup)
 
                 text = soup.get_text()
                 word_freq = self.get_word_frequency(text)
@@ -102,7 +114,7 @@ class Parser:
 
                 self.summary.increment('parsed')
             except Exception as error:
-                logging.error("Failed to parse %s: %s", url, str(error).split('\n', maxsplit=1)[0])
-                logging.debug(error)
+                logging.error("Failed to parse %s: %s", url, str(error))
+                print(error)
 
                 # link_queue.put((new_link, 0))

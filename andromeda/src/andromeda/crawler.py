@@ -74,7 +74,7 @@ class Crawler:
                 self.summary.increment('crawled')
             except Exception as error:
                 logging.error("Failed to get %s: %s", get_link, str(error).split('\n', maxsplit=1)[0])
-                logging.debug(error)
+                print(error)
 
                 if retries < MAXIMUM_RETRIES:
                     link_queue.put((get_link, retries + 1))
