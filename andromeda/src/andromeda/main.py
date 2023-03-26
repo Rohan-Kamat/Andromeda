@@ -22,12 +22,11 @@ def cli():
 @click.option('--initial_links', type=str, multiple=True, help="Initial list of links to begin crawling", default=['https://www.wikipedia.org'])
 def start(n_crawler, n_parser, initial_links):
     initial_links = list(initial_links)
-    # try:
-    #     with open(PROGRESS_FILE, 'rb') as save_file:
-    #         logging.info("Loading INITIAL_LINKS from %s", PROGRESS_FILE)
-    #         INITIAL_LINKS = pickle.load(save_file)
-    # except Exception as error:
-    #     pass
+    try:
+        websites = Websites()
+        initial_links = [obj['url'] for obj in websites.get_uncrawled()]
+    except Exception as error:
+        pass
     logging.info("Initialising link_queue with INITIAL_LINKS: %s", initial_links)
 
     link_queue = Queue()

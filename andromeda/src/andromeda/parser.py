@@ -78,6 +78,7 @@ class Parser:
 
                 lang = self.get_language(soup)
                 if lang is None or 'en' not in lang:
+                    self.websites.insert_data(url, {}, lang)
                     self.summary.increment('non_english')
                     continue
 
