@@ -50,7 +50,8 @@ class Crawler:
         )
 
         self.driver = webdriver.Chrome(options=options)
-        self.driver.set_page_load_timeout(30)
+        # self.driver.set_page_load_timeout(30)
+        self.driver.implicitly_wait(10)
 
         self.summary = Summary()
 
@@ -58,6 +59,7 @@ class Crawler:
 
     def get(self, url: str):
         self.driver.get(url)
+        self.driver.execute_script("window.scrollTo(0, 100)") 
         page = self.driver.page_source
         return page
 
