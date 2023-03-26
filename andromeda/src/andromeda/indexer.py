@@ -47,6 +47,26 @@ class Database(metaclass=abc.ABCMeta):
         """
         """
 
+class Hosts(Database):
+    def __init__(self):
+        super().__init__('hosts')
+
+        self.collection.create_index('host', unique=True)
+    
+    def get(self, key: str):
+        data = json.loads(dumps(self.collection.find(
+            {'host': key},
+            {}
+        )))
+        return data[0]['value'] if len(data) == 1 else None
+
+    def add(self, host):
+        self.collection.update_one(
+            {'host': host},
+            {'$set': {'host': host}},
+            upsert=True
+        )
+
 class Summary(Database):
     def __init__(self):
         super().__init__('summary')
