@@ -6,7 +6,7 @@ import abc
 from bson.json_util import dumps
 import pymongo
 
-from andromeda.config import FREQUENCY_THRESHOLD
+from andromeda.config import FREQUENCY_THRESHOLD, DATABASE
 
 
 logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ class Database(metaclass=abc.ABCMeta):
             passwd='adminpw',
             host=os.environ.get('MONGODB_HOST') or 'localhost',
             port=27017,
-            database='test',
+            database=DATABASE,
     ):
         try:
             self.client = pymongo.MongoClient(f'mongodb://{user}:{passwd}@{host}:{port}')
