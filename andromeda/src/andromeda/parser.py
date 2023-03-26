@@ -10,7 +10,7 @@ from nltk.corpus import stopwords
 import nltk
 # nltk.download('stopwords')
 
-from andromeda.indexer import Websites, Summary
+from andromeda.indexer import Websites, Summary, Hosts
 from andromeda.config import FREQUENCY_THRESHOLD
 
 
@@ -20,6 +20,7 @@ class Parser:
     def __init__(self):
         self.websites = Websites()
         self.summary = Summary()
+        self.hosts = Hosts()
 
         self.stemmer = PorterStemmer()
         self.stop_words = set(stopwords.words('english'))
@@ -77,6 +78,7 @@ class Parser:
 
                 lang = self.get_language(soup)
                 if lang is None or 'en' not in lang:
+                    print(lang)
                     self.summary.increment('non_english')
                     continue
 
@@ -99,6 +101,9 @@ class Parser:
                 for new_link in new_links:
                     link_queue.put((new_link, 0))
                 logging.info("The global link_queue has %i url(s)", link_queue.qsize())
+
+                self.hosts.add(urlparse(url).hostname)
+
                 self.summary.increment('parsed')
             except Exception as error:
                 logging.error("Failed to parse %s: %s", url, str(error).split('\n', maxsplit=1)[0])
