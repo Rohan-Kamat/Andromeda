@@ -97,11 +97,11 @@ class Parser:
                 self.websites.insert_data(url, word_freq, lang)
 
                 for new_link in new_links:
-                    link_queue.put(new_link)
+                    link_queue.put((new_link, 0))
                 logging.info("The global link_queue has %i url(s)", link_queue.qsize())
                 self.summary.increment('parsed')
             except Exception as error:
                 logging.error("Failed to parse %s: %s", url, str(error).split('\n', maxsplit=1)[0])
                 logging.debug(error)
 
-                link_queue.put(url)
+                # link_queue.put((new_link, 0))
