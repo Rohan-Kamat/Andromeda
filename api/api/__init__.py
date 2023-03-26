@@ -15,11 +15,13 @@ def run():
     @app.route('/search', methods=['GET'])
     def search():
         query = request.args['query']
+        detailed = True if 'detailed' in request.args else False
 
         ranker = BM25()
         results = ranker.get_docs(query)[:5]
 
-        results = [get_metadata(url) for url in results]
+        if detailed:
+            results = [get_metadata(url) for url in results]
 
         return results
 

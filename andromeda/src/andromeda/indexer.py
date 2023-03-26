@@ -140,7 +140,7 @@ class Websites(Database):
     def get(self, key: str):
         data = json.loads(dumps(self.collection.find(
             {'url': key},
-            {}
+            {'_id': 0, 'length': 1}
         )))
         return data[0] if len(data) == 1 else None
 
