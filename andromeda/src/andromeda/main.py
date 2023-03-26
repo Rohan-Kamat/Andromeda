@@ -32,7 +32,7 @@ def start(n_crawler, n_parser, initial_links):
 
     link_queue = Queue()
     for link in initial_links:
-        link_queue.put(link)
+        link_queue.put((link, 0))
 
     data_queue = Queue()
 
@@ -56,20 +56,21 @@ def flush():
 def debug(url):
     crawler = Crawler()
     html = crawler.get(url)
+    # print(html)
 
     soup = BeautifulSoup(html, 'html.parser')
 
     parser = Parser()
 
     lang = parser.get_language(soup)
-    print(lang)
 
     links = parser.get_links(soup)
 
     text = soup.get_text()
-    print(text)
     word_freq = parser.get_word_frequency(text)
     print(word_freq)
+
+    print(parser.get_links(soup))
 
 cli.add_command(start)
 cli.add_command(flush)

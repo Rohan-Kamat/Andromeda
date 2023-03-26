@@ -6,8 +6,12 @@ from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 from nltk.stem import PorterStemmer
+from nltk.corpus import stopwords
+import nltk
+# nltk.download('stopwords')
 
 from andromeda.indexer import Websites, Summary
+from andromeda.config import FREQUENCY_THRESHOLD
 
 
 logger = logging.getLogger(__name__)
@@ -17,7 +21,8 @@ class Parser:
         self.websites = Websites()
         self.summary = Summary()
 
-        self.porter_stemmer = PorterStemmer()
+        self.stemmer = PorterStemmer()
+        self.stop_words = set(stopwords.words('english'))
 
     def get_links(self, soup):
         links = set()
@@ -27,8 +32,11 @@ class Parser:
         return list(links)
 
     def __is_valid(self, word: str) -> bool:
+        if word in self.stop_words:
+            return False
+
         # Must contain only alphabets and digits
-        pattern = re.compile('^[a-zA-Z0-9]+$')
+        pattern = re.compile('^[a-zA-Z0-9@\-_\.]+$')
         if not pattern.match(word):
             return False
 
@@ -39,14 +47,16 @@ class Parser:
         return True
 
     def get_word_frequency(self, text):
-        vectorizer = CountVectorizer(stop_words='english')
-        matrix = vectorizer.fit_transform([text])
-        data_frame = pd.DataFrame(
-            matrix.toarray(),
-            columns=vectorizer.get_feature_names_out()
-        ).to_dict('dict')
-        word_freq = {self.porter_stemmer.stem(str(word)): stats[0] for word, stats in data_frame.items() if self.__is_valid(word)}
-        return word_freq
+        word_freq = {}
+        sentences = nltk.sent_tokenize(text)
+        for sentence in sentences:
+            for word in nltk.word_tokenize(sentence):
+                word = self.stemmer.stem(word.lower())
+                if word not in word_freq:
+                    word_freq[word] = 0
+                if self.__is_valid(word):
+                    word_freq[word] += 1
+        return {word: freq for word, freq in word_freq.items() if freq > FREQUENCY_THRESHOLD}
 
     def get_language(self, soup):
         try:
