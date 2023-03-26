@@ -1,5 +1,9 @@
 # Running
 ## Dev
 ```bash
-flask --app app.py --debug run --host 0.0.0.0
+flask --app api:run run --debug --host 0.0.0.0
+```
+## Prod
+```bash
+waitress-serve --call 'api:run'
 ```
