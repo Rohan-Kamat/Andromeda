@@ -6,7 +6,6 @@ import click
 from bs4 import BeautifulSoup
 
 from andromeda.indexer import Websites, InvertedIndex, Summary, Hosts
-from andromeda.config import PROGRESS_FILE
 from andromeda.runtime import CrawlerRuntime, ParserRuntime
 from andromeda.crawler import Crawler
 from andromeda.parser import Parser
