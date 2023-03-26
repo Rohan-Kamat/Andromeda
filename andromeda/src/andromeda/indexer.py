@@ -122,11 +122,10 @@ class InvertedIndex(Database):
         )
 
     def update_index(self, word, url, freq):
-        self.insert_word(word)
-
         self.collection.update_one(
             {'word': word},
-            {'$push': {'index': (url, freq)}}
+            {'$push': {'index': (url, freq)}},
+            upsert=True
         )
 
 class Websites(Database):
