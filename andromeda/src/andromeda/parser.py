@@ -3,15 +3,12 @@ import re
 import logging
 
 from bs4 import BeautifulSoup
-from sklearn.feature_extraction.text import CountVectorizer
-import pandas as pd
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 import nltk
 # nltk.download('stopwords')
 
 from andromeda.indexer import Websites, Summary, Hosts
-from andromeda.config import FREQUENCY_THRESHOLD
 
 
 logger = logging.getLogger(__name__)

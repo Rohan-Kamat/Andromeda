@@ -52,7 +52,7 @@ class Hosts(Database):
         super().__init__('hosts')
 
         self.collection.create_index('host', unique=True)
-    
+
     def get(self, key: str):
         data = json.loads(dumps(self.collection.find(
             {'host': key},

@@ -1,11 +1,8 @@
 import abc
 from threading import Thread
-import atexit
-import pickle
 
 from andromeda.crawler import Crawler
 from andromeda.parser import Parser
-from andromeda.config import PROGRESS_FILE
 
 
 class Runtime(metaclass=abc.ABCMeta):

@@ -6,7 +6,6 @@ import shutil
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 
 from andromeda.config import LOG_FILE, DOWNLOAD_DIRECTORY, MAXIMUM_RETRIES, DATABASE
 from andromeda.indexer import Summary
@@ -49,7 +48,7 @@ class Crawler:
             'prefs', prefs
         )
 
-        self.driver = webdriver.Chrome(options=options)
+        self.driver = webdriver.Chrome(options=options, service=Service(chromedriver_path))
         self.driver.set_page_load_timeout(30)
 
         self.summary = Summary()
@@ -58,17 +57,16 @@ class Crawler:
 
     def get(self, url: str):
         self.driver.get(url)
-        self.driver.execute_script("window.scrollTo(0, 100)") 
         page = self.driver.page_source
         return page
 
     def run(self, link_queue, data_queue):
         while True:
-            try:
-                logging.info("Waiting for a URL")
-                (get_link, retries) = link_queue.get()
-                logging.info("Getting %s", get_link)
+            logging.info("Waiting for a URL")
+            (get_link, retries) = link_queue.get()
+            logging.info("Getting %s", get_link)
 
+            try:
                 page = self.get(get_link)
                 logging.info("Downloaded %s", get_link)
 
