@@ -11,21 +11,18 @@ def get_metadata(url: str):
 
     try:
         html = crawler.get(url)
+        soup = BeautifulSoup(html, 'html.parser')
+
+        title = soup.title.get_text()
+        heading = get_text(soup.select('h1')[0])
+        description = get_text(soup.select('p')[0])
+
+        return {
+            'url': url,
+            'title': title,
+            'heading': heading,
+            'description': description
+        }
     except Exception as error:
         print(error)
         return {'url': url}
-
-    soup = BeautifulSoup(html, 'html.parser')
-
-    title = soup.title.get_text()
-
-    heading = get_text(soup.select('h1')[0])
-
-    description = get_text(soup.select('p')[0])
-
-    return {
-        'url': url,
-        'title': title,
-        'heading': heading,
-        'description': description
-    }
