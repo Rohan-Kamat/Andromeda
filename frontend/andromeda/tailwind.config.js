@@ -9,7 +9,12 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        // https://fonts.google.com/specimen/Chakra+Petch?preview.text=Andromeda&preview.size=72&preview.text_type=custom
+        chakra: ['Chakra Petch', 'sans-serif'],
+      }
+    },
   },
   plugins: [],
 }
