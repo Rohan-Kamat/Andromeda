@@ -2,6 +2,4 @@ source ../venv/bin/activate
 
 python src/andromeda/setup.py
 
-python src/andromeda/main.py flush
-
-python src/andromeda/main.py start --n_crawler=4 --n_parser=4
+python src/andromeda/main.py start --n_crawler=10 --n_parser=7

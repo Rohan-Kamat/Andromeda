@@ -176,3 +176,9 @@ class Websites(Database):
             {'$set': {'lang': lang, 'length': length}}
         )
         return self.get(url)
+
+    def get_uncrawled(self):
+        return json.loads(dumps(self.collection.find(
+            {'lang': None, 'length': None},
+            {'url': 1, '_id': 0}
+        )))
