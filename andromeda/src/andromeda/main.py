@@ -5,7 +5,7 @@ import logging
 import click
 from bs4 import BeautifulSoup
 
-from andromeda.indexer import Websites, InvertedIndex, Summary
+from andromeda.indexer import Websites, InvertedIndex, Summary, Hosts
 from andromeda.config import PROGRESS_FILE
 from andromeda.runtime import CrawlerRuntime, ParserRuntime
 from andromeda.crawler import Crawler
@@ -47,7 +47,7 @@ def start(n_crawler, n_parser, initial_links):
 
 @click.command(help="Flush the database")
 def flush():
-    collections = [Websites(), InvertedIndex(), Summary()]
+    collections = [Websites(), InvertedIndex(), Summary(), Hosts()]
     for collection in collections:
         collection.flush()
 
@@ -67,6 +67,7 @@ def debug(url):
     links = parser.get_links(soup)
 
     text = soup.get_text()
+    print(text)
     word_freq = parser.get_word_frequency(text)
     print(word_freq)
 
