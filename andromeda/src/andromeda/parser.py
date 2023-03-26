@@ -57,7 +57,7 @@ class Parser:
                     word_freq[word] = 0
                 if self.__is_valid(word):
                     word_freq[word] += 1
-        return {word: freq for word, freq in word_freq.items() if freq > FREQUENCY_THRESHOLD}
+        return {word: freq for word, freq in word_freq.items() if freq > 0}
 
     def get_language(self, soup):
         try:
