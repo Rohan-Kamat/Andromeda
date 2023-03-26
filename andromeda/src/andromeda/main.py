@@ -19,7 +19,7 @@ def cli():
 @click.command(help="Start the crawler")
 @click.option('--n_crawler', type=int, help="Number of crawlers", default=1)
 @click.option('--n_parser', type=int, help="Number of parsers", default=1)
-@click.option('--initial_links', type=str, multiple=True, help="Initial list of links to begin crawling", default=['https://www.nitk.ac.in/'])
+@click.option('--initial_links', type=str, multiple=True, help="Initial list of links to begin crawling", default=['https://www.nitk.ac.in'])
 @click.option('--load', is_flag=True, help="Start from where you left")
 def start(n_crawler, n_parser, initial_links, load):
     initial_links = list(initial_links)
