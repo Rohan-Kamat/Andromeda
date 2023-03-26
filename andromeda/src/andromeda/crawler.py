@@ -8,13 +8,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
-from andromeda.config import LOG_FILE, DOWNLOAD_DIRECTORY, MAXIMUM_RETRIES
+from andromeda.config import LOG_FILE, DOWNLOAD_DIRECTORY, MAXIMUM_RETRIES, DATABASE
 from andromeda.indexer import Summary
 
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
-    filename=LOG_FILE,
+    filename=f'{LOG_FILE}.{DATABASE}.log',
     filemode='w+',
     format='%(asctime)s %(msecs)d %(pathname)s %(threadName)s %(levelname)s %(message)s',
     datefmt='%H:%M:%S',
