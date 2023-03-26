@@ -422,6 +422,7 @@ disable=raw-checker-failed,
         line-too-long,
         too-many-locals,
         redefined-outer-name,
+        anomalous-backslash-in-string,
         # to be enabled
         missing-function-docstring,
         missing-class-docstring,

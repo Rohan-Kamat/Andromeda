@@ -20,13 +20,18 @@ def cli():
 @click.option('--n_crawler', type=int, help="Number of crawlers", default=1)
 @click.option('--n_parser', type=int, help="Number of parsers", default=1)
 @click.option('--initial_links', type=str, multiple=True, help="Initial list of links to begin crawling", default=['https://www.nitk.ac.in/'])
-def start(n_crawler, n_parser, initial_links):
+@click.option('--load', is_flag=True, help="Start from where you left")
+def start(n_crawler, n_parser, initial_links, load):
     initial_links = list(initial_links)
     try:
-        websites = Websites()
-        initial_links = [obj['url'] for obj in websites.get_uncrawled()]
+        if load:
+            websites = Websites()
+
+            uncrawled = websites.get_uncrawled()
+            if len(uncrawled):
+                initial_links = [obj['url'] for obj in uncrawled]
     except Exception as error:
-        pass
+        logging.error(error)
     logging.info("Initialising link_queue with INITIAL_LINKS: %s", initial_links)
 
     link_queue = Queue()
@@ -53,6 +58,8 @@ def flush():
 @click.command(help="")
 @click.option('--url', type=str, help="URL to be mocked")
 def debug(url):
+    # pylint: disable=all
+
     crawler = Crawler()
     html = crawler.get(url)
     # print(html)
