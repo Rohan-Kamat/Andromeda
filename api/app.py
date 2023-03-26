@@ -2,6 +2,8 @@ from flask import Flask, request
 
 from andromeda.ranker import BM25
 
+from api.utils import get_metadata
+
 
 app = Flask(__name__)
 
@@ -12,5 +14,10 @@ def index():
 @app.route('/search', methods=['GET'])
 def search():
     query = request.args['query']
+
     ranker = BM25()
-    return ranker.get_docs(query)
+    results = ranker.get_docs(query)[:5]
+
+    results = [get_metadata(url) for url in results]
+
+    return results

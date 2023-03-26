@@ -1,6 +1,6 @@
-LOG_FILE = 'andromeda'
-CLI_PREFIX = 'python andromeda/src/andromeda/cli.py'
-PROGRESS_FILE = 'andromeda.bak'
+import os
+
+LOG_FILE = os.path.join(os.path.dirname(__file__), 'andromeda')
 FREQUENCY_THRESHOLD = 3
 DOWNLOAD_DIRECTORY = 'downloads'
 MAXIMUM_RETRIES = 3

@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 import nltk
-# nltk.download('stopwords')
 
 from andromeda.indexer import Websites, Summary, Hosts
 
