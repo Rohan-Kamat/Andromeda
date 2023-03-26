@@ -159,12 +159,6 @@ class Websites(Database):
         )
 
     def insert_data(self, url: str, data: dict, lang: str):
-        assert self.exists(url)
-        self.collection.update_one(
-            {'url': url},
-            {'$set': {'lang': lang, 'length': length}}
-        )
-        
         length = 0
         for word, freq in data.items():
             length += freq
@@ -175,6 +169,11 @@ class Websites(Database):
         total_length += length
         self.summary.update('total_length', total_length)
 
+        assert self.exists(url)
+        self.collection.update_one(
+            {'url': url},
+            {'$set': {'lang': lang, 'length': length}}
+        )
         return self.get(url)
 
     def get_uncrawled(self):

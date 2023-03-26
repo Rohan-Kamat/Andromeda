@@ -41,6 +41,9 @@ class BM25(Ranker):
             for [url, n_doc] in word_index['index']:
                 doc = self.websites.get(url)
 
+                if 'length' not in doc:
+                    continue
+
                 doc_len = doc['length']
                 norm_len = 1 - self._b + self._b * doc_len / avg_doc_len
 
