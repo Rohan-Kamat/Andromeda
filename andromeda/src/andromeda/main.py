@@ -71,14 +71,15 @@ def debug(url):
     lang = parser.get_language(soup)
 
     parsed_url = urlparse(url)
-    print(parsed_url)
+    # print(parsed_url)
     links = parser.get_links(url, soup)
-    print(links)
+    print(url)
+    # print(links)
 
     text = soup.get_text()
     # print(text)
     word_freq = parser.get_word_frequency(text)
-    # print(word_freq)
+    print(word_freq)
 
 
 cli.add_command(start)

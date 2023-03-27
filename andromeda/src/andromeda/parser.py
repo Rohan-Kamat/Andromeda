@@ -32,6 +32,8 @@ class Parser:
         for link in soup.find_all('a'):
             try:
                 link = link['href']
+                if link.endswith('.pdf'):
+                    continue
                 if not link.startswith('https://'):
                     link = urlparse(link)
                     link = urljoin(base_url, link.path) + ('?' if link.query != '' else '') + f'{link.query}'
@@ -92,8 +94,7 @@ class Parser:
                     self.summary.increment('non_english')
                     continue
 
-                if not self.websites.exists(url):
-                    self.websites.insert_url(url)
+                self.websites.insert_url(url)
 
                 links = self.get_links(url, soup)
 
