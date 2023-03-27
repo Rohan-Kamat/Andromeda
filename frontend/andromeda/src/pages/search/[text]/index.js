@@ -9,16 +9,17 @@ import { useEffect } from 'react';
 function MetaData() {
 
   return (
-    <>
+    <div className=''>
     <main className="min-h-screen align-center">
 
-    <div className={styles.center}>
+    <div className={`${styles.center} fixed top-0 -z-1`}></div>
       <div className='flex flex-col'>
-
-       <div class="relative mb-4 flex w-full flex-wrap items-stretch rounded  border border-solid border-neutral-300 ">
+    <div className="">
+      
+       <div class="mx-auto mb-4 mt-10 flex w-full flex-wrap items-stretch rounded max-w-[500px]  border border-solid border-neutral-300 ">
                     <input
                       type="search"
-                      class="relative m-0 -mr-px block w-[1%] min-w-0 flex-auto rounded-l  bg-transparent bg-clip-padding px-3 py-1.5 text-base font-normal text-neutral-700 outline-none transition duration-300 ease-in-out focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none "
+                      class="relative m-0 -mr-px block w-[1%] min-w-0  flex-auto rounded-l  bg-transparent bg-clip-padding px-3 py-1.5 text-base font-normal text-neutral-700 outline-none transition duration-300 ease-in-out focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none "
                       placeholder="Search"
                       aria-label="Search"
                       aria-describedby="button-addon1"
@@ -43,20 +44,24 @@ function MetaData() {
                           </Link>
                           </div>
                   </div>
-     <Result />
-     <Result />
-     <Result />
-     <Result />
-     <Result />
-     <Result />
-     <Result />
-     <Result />
-     <Result />
+                  <div className='mx-auto max-w-[600px]'>
+
+                      <Result />
+                      <Result />
+                      <Result />
+                      <Result />
+                      <Result />
+                      <Result />
+                      <Result />
+                      <Result />
+                      <Result />
+                  </div>
+                  
+    </div>
 
                           </div>
-                          </div>
                           </main>
-    </>
+    </div>
   );
 }
 

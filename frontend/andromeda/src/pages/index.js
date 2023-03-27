@@ -23,8 +23,8 @@ export default function Home() {
   return (
     <>
       <main className={styles.main}>
-        <div className={styles.center}>
-          <div className="flex-col">
+        <div className={styles.center}></div>
+          <div className="flex-col my-[100px]">
             <div className="text-8xl font-bold font-chakra">Andromeda</div>
             <div className="mt-[50px]">
               <div class="flex justify-center">
@@ -57,7 +57,7 @@ export default function Home() {
                       </svg>
                           </Link>
                           </div>
-                  </div>
+                  
                   
 
 
