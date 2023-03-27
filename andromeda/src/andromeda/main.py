@@ -81,7 +81,6 @@ def debug(url):
     word_freq = parser.get_word_frequency(text)
     print(word_freq)
 
-
 cli.add_command(start)
 cli.add_command(flush)
 cli.add_command(debug)
