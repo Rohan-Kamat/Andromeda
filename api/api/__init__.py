@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_cors import CORS
 from andromeda.ranker import BM25
 
 from api.utils import get_metadata
@@ -6,6 +7,7 @@ from api.utils import get_metadata
 
 def run():
     app = Flask(__name__)
+    CORS(app)
 
     @app.route('/', methods=['GET'])
     def index():
