@@ -76,8 +76,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
+  position: fixed;
+  top: 30vh;
+  left: 50vw;
   padding: 4rem 0;
+  z-index: -10;
 }
 
 .center::before {
@@ -86,9 +89,36 @@
   width: 480px;
   height: 360px;
   margin-left: -400px;
+  z-index: -10;
+
 }
 
 .center::after {
+  background: var(--primary-glow);
+  width: 240px;
+  height: 180px;
+  z-index: -1;
+  z-index: -10;
+
+}
+
+.centerBackground {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 4rem 0;
+}
+
+.centerBackground::before {
+  background: var(--secondary-glow);
+  border-radius: 50%;
+  width: 480px;
+  height: 360px;
+  margin-left: -400px;
+}
+
+.centerBackground::after {
   background: var(--primary-glow);
   width: 240px;
   height: 180px;

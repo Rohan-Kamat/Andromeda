@@ -1,3 +1,9 @@
+@import url("https://fonts.google.com/specimen/Chakra+Petch?preview.text=Andromeda&preview.size=72&preview.text_type=custom");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
