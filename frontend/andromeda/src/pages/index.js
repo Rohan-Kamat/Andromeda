@@ -32,7 +32,7 @@ export default function Home() {
                   <div class="relative mb-4 flex w-full flex-wrap items-stretch rounded  border border-solid border-neutral-300 ">
                     <input
                       type="search"
-                      class="relative m-0 -mr-px block w-[1%] min-w-0 flex-auto rounded-l  bg-transparent bg-clip-padding px-3 py-1.5 text-base font-normal text-neutral-700 outline-none transition duration-300 ease-in-out focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none "
+                      class="relative m-0 -mr-px block w-[1%] min-w-0 flex-auto rounded-l text-white bg-transparent bg-clip-padding px-3 py-1.5 text-base font-normal text-neutral-700 outline-none transition duration-300 ease-in-out focus:border-primary focus:text-white focus:shadow-te-primary focus:outline-none "
                       placeholder="Search"
                       aria-label="Search"
                       aria-describedby="button-addon1"
@@ -41,7 +41,7 @@ export default function Home() {
                     />
                     <div className="rounded-l  pt-2 pr-2">
 
-                    <Link href={{ pathname: '/search', query: { text: searchText} }}>
+                    <Link href={{ pathname: '/search', query: { text: searchText, page:1,per_page:10} }}>
                     
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

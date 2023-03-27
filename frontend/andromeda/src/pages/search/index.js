@@ -1,28 +1,38 @@
 import Result from "@/components/result";
 import Link from "next/link";
 import styles from "@/styles/Home.module.css";
-import { useState } from "react";
+import { use, useState } from "react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import ReactLoading from "react-loading";
 
+import ReactPaginate from 'react-paginate';
+
 function SearchPage() {
   const router = useRouter();
-  const { text } = router.query;
+  const { text,page,per_page } = router.query;
   const [isLoading, setIsLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [searchText, setSearchText] = useState(text);
   const [links, setLinks] = useState([]);
-
+  
   const handleChange = (event) => {
     console.log(event.target.value);
     setSearchText(event.target.value);
   };
 
+
+  const handlePageChange = (event) => {
+    console.log(event.selected);
+    router.query.page = event.selected + 1;
+    router.push(router)
+  }
+
+
   const callAPI = async () => {
     console.log("Calling API");
     const response = await fetch(
-      `http://10.22.0.51:5000/search?query=${text}`,
+      `http://10.22.0.51:5000/search?query=${text}&page=${page}&per_page=${per_page}`,
       {
         method: "GET",
         headers: {
@@ -37,21 +47,20 @@ function SearchPage() {
 
     
     setLinks(links);
+    console.log("fetched results")
     setIsLoading(false);
   };
 
 
 
-  useEffect(() => {
-    setLinks([]);
-    callAPI();
-  }, [searchText]);
-
+ 
 
   useEffect(() => {
+    if (text == undefined) return;
+    setIsLoading(true);
     setSearchText(text);
     callAPI();
-  }, []);
+  }, [text,page,per_page]);
 
   return (
     <div className="">
@@ -63,16 +72,23 @@ function SearchPage() {
               
               <input
                 type="search"
-                class="relative m-0 -mr-px block w-[1%] min-w-0  flex-auto rounded-l  bg-transparent bg-clip-padding px-3 py-1.5 text-base font-normal text-neutral-700 outline-none transition duration-300 ease-in-out focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none "
+
+                class="relative m-0 -mr-px block w-[1%] min-w-0 text-white flex-auto rounded-l  bg-transparent bg-clip-padding px-3 py-1.5 text-base font-normal text-neutral-700 outline-none transition duration-300 ease-in-out focus:border-primary  focus:shadow-te-primary focus:outline-none "
                 placeholder="Search"
                 aria-label="Search"
                 aria-describedby="button-addon1"
                 value={searchText}
+                onChange={handleChange}
               />
 
               <div className="rounded-l  pt-2 pr-2">
                 <Link
-                  href={{ pathname: "/search", query: { text: searchText } }}
+                  href={{ pathname: '/search', query: { text: searchText, page:1,per_page:10} }}
+                  onClick = {() => {
+                    router.query.text = searchText;
+                    router.query.page = 1;  
+                    router.push(router)
+                  }}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -96,14 +112,26 @@ function SearchPage() {
               </div>
             ) : (
               <div className="  mx-auto max-w-[600px]">
-                {links.map((link) => {
-                  return <Result link={link} />;
+                {links.map((link,index) => {
+                  return <Result link={link} key={index}/>;
                 })}
               </div>
             )}
 
 
+<div>
+<ReactPaginate
+        breakLabel="..."
+        nextLabel=">"
+        onPageChange={handlePageChange}
+        pageRangeDisplayed={5}
+        pageCount={3}
+        previousLabel="<"
+        renderOnZeroPageCount={null}
+        className="flex flex-row justify-center items-center gap-x-5"
+      /></div>
           </div>
+        
         </div>
       </main>
     </div>
