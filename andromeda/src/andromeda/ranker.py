@@ -34,6 +34,7 @@ class BM25(Ranker):
 
         docs = {}
         refs = {}
+        total_refs = 0
         for word, n_query in word_freq.items():
             if not self.index.exists(word):
                 continue
@@ -47,6 +48,7 @@ class BM25(Ranker):
                 doc = self.websites.get(url)
 
                 refs[url] = doc['references']
+                total_refs += refs[url]
 
                 if 'length' not in doc:
                     continue
@@ -61,8 +63,10 @@ class BM25(Ranker):
                     docs[url] = 0
                 docs[url] += n_query * term_freq * inv_doc_freq
 
+        avg_refs = total_refs / len(docs)
+
         for url in docs:
-            docs[url] *= sigmoid(refs[url] / 1000)
+            docs[url] *= sigmoid((refs[url] - avg_refs) / 100)
 
         docs = list(docs.items())
         self.__sort_docs(docs)
