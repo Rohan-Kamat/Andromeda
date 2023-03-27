@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -8,23 +8,23 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 export default function SearchBar() {
 	const [searchText, setSearchText] = useState('');
 
-	const router = useRouter()
+	const router = useRouter();
 
 	const handleChange = (event) => {
-		console.log(searchText)
-		setSearchText(event.target.value)
+		console.log(searchText);
+		setSearchText(event.target.value);
 	};
 
 	const handleSubmit = (e) => {
-		e.preventDefault()
+		e.preventDefault();
 
 		if (router.pathname == '/search') {
-			router.reload({ pathname: '/search', query: { text: searchText} })
+			router.reload({ pathname: '/search', query: { text: searchText} });
 		}
 		else {
-			router.push({ pathname: '/search', query: { text: searchText} })
+			router.push({ pathname: '/search', query: { text: searchText} });
 		}
-	}
+	};
 
 	return (
 		<>

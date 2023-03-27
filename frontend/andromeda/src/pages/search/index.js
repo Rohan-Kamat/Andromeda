@@ -10,9 +10,9 @@ import { LoaderContext } from '@/contexts/loaderContext';
 
 
 function SearchPage() {
-	const { publicRuntimeConfig } = getConfig()
-	const apiHost = publicRuntimeConfig.apiHost
-	const perPage = publicRuntimeConfig.perPage
+	const { publicRuntimeConfig } = getConfig();
+	const apiHost = publicRuntimeConfig.apiHost;
+	const perPage = publicRuntimeConfig.perPage;
 	
 	const router = useRouter();
 	const [text, setText] = useState(router.query.text);
@@ -24,11 +24,11 @@ function SearchPage() {
 	const [page, setPage] = useState(1);
 	
 	const handlePageChange = (e) => {
-		setPage(e.selected + 1)
+		setPage(e.selected + 1);
 	};
 	
 	const getData = async () => {
-		setLoading(true)
+		setLoading(true);
 		
 		try {
 			const response = await fetch(
@@ -39,25 +39,25 @@ function SearchPage() {
 						'Content-Type': 'application/json',
 					},
 				}
-			).then((response) => response.json())
+			).then((response) => response.json());
 
 			const links = response.map((item) => {
-				return item[0]
+				return item[0];
 			});
 
-			console.log(links)
-			setResults(links)
+			console.log(links);
+			setResults(links);
 		} catch (error) {
-			console.log(error)
-			setResults([])
+			console.log(error);
+			setResults([]);
 		}
 
-		setLoading(false)
+		setLoading(false);
 	};
 
 	useEffect(() => {
-		getData()
-	}, [page, text])
+		getData();
+	}, [page, text]);
 
 	return (
 		<>

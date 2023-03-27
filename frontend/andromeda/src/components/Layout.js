@@ -6,7 +6,7 @@ import styles from '@/styles/Home.module.css';
 
 
 export default function Layout({ children }) {
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState(false);
 
 	return (
 		<>

@@ -23,19 +23,19 @@ const ResultSkeleton = () => {
 				</SkeletonTheme>
 			</div>
 		</>
-	)
-}
+	);
+};
 
 const truncate = (str, n) => {
 	if (str == null) {
-		return null
+		return null;
 	}
 	return str?.length > n ? str.substr(0, n - 1) + '...' : str;
 };
 
 export default function Result({ link }) {
-	const { publicRuntimeConfig } = getConfig()
-	const apiHost = publicRuntimeConfig.apiHost
+	const { publicRuntimeConfig } = getConfig();
+	const apiHost = publicRuntimeConfig.apiHost;
 
 	const [data, setData] = useState({});
 
@@ -43,23 +43,23 @@ export default function Result({ link }) {
 
 	const getMetaData = async () => {
 		try {
-			setLoading(true)
+			setLoading(true);
 
 			let response = await fetch(`${apiHost}/metadata?url=${link}`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-			})
-			response = await response.json()
+			});
+			response = await response.json();
 
-			setData(response)
+			setData(response);
 		}
 		catch (error) {
-			console.log(error)
+			console.log(error);
 		}
 
-		setLoading(false)
+		setLoading(false);
 	};
 
 	useEffect(() => {

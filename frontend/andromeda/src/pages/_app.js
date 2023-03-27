@@ -1,6 +1,6 @@
 import Head from 'next/head';
 
-import 'react-loading-skeleton/dist/skeleton.css'
+import 'react-loading-skeleton/dist/skeleton.css';
 
 import Layout from '@/components/Layout';
 import '@/styles/globals.css';
