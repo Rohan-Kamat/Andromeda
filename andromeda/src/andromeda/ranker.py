@@ -1,9 +1,13 @@
 import math
 import abc
+import math
 
 from andromeda.indexer import InvertedIndex, Websites, Summary
 from andromeda.parser import Parser
 
+
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
 
 class Ranker(metaclass=abc.ABCMeta):
     def __init__(self):
@@ -20,7 +24,7 @@ class BM25(Ranker):
         super().__init__()
 
     def __sort_docs(self, docs: dict) -> list:
-        return sorted(docs, key=docs.get, reverse=True)
+        docs.sort(key=lambda url: url[1], reverse=True)
 
     def get_docs(self, query):
         word_freq = self.parser.get_word_frequency(query)
@@ -29,6 +33,7 @@ class BM25(Ranker):
         avg_doc_len = self.summary.get('total_length') / n_docs
 
         docs = {}
+        refs = {}
         for word, n_query in word_freq.items():
             if not self.index.exists(word):
                 continue
@@ -40,6 +45,8 @@ class BM25(Ranker):
 
             for [url, n_doc] in word_index['index']:
                 doc = self.websites.get(url)
+
+                refs[url] = doc['references']
 
                 if 'length' not in doc:
                     continue
@@ -54,5 +61,9 @@ class BM25(Ranker):
                     docs[url] = 0
                 docs[url] += n_query * term_freq * inv_doc_freq
 
-        docs = self.__sort_docs(docs)
+        for url in docs:
+            docs[url] *= sigmoid(refs[url] / 1000)
+
+        docs = list(docs.items())
+        self.__sort_docs(docs)
         return docs
