@@ -119,7 +119,7 @@ function SearchPage() {
             )}
 
 
-<div>
+<div className="mb-3">
 <ReactPaginate
         breakLabel="..."
         nextLabel=">"
