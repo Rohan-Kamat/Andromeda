@@ -41,7 +41,7 @@ export default function Home() {
                     />
                     <div className="rounded-l  pt-2 pr-2">
 
-                    <Link href={`search/${searchText}`}>
+                    <Link href={{ pathname: '/search', query: { text: searchText} }}>
                     
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
