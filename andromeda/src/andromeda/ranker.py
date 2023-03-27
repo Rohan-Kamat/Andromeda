@@ -1,13 +1,12 @@
 import math
 import abc
-import math
 
 from andromeda.indexer import InvertedIndex, Websites, Summary
 from andromeda.parser import Parser
 
 
-def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
+def sigmoid(val):
+    return 1 / (1 + math.exp(-val))
 
 class Ranker(metaclass=abc.ABCMeta):
     def __init__(self):
@@ -45,6 +44,8 @@ class BM25(Ranker):
             inv_doc_freq = math.log((n_docs + 1) / doc_freq)
 
             for [url, n_doc] in word_index['index']:
+                if url.endswith('.pdf'):
+                    continue
                 doc = self.websites.get(url)
 
                 refs[url] = doc['references']
