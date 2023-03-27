@@ -1,5 +1,4 @@
 from flask import Flask, request
-
 from andromeda.ranker import BM25
 
 from api.utils import get_metadata
@@ -15,14 +14,21 @@ def run():
     @app.route('/search', methods=['GET'])
     def search():
         query = request.args['query']
-        detailed = True if 'detailed' in request.args else False
 
         ranker = BM25()
         results = ranker.get_docs(query)
 
-        if detailed:
-            results = [get_metadata(url) for url in results[:5]]
+        page = int(request.args['page']) - 1
+        per_page = int(request.args['per_page'])
+        first = page * per_page
+        last = first + per_page
 
-        return results
+        return results[first:last]
+
+    @app.route('/metadata', methods=['GET'])
+    def metadata():
+        url = request.args['url']
+
+        return get_metadata(url)
 
     return app
