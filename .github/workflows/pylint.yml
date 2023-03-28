@@ -27,4 +27,4 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pylint andromeda/src/andromeda
-        pylint api
+        pylint api/api
