@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import getConfig from 'next/config';
+import Link from 'next/link';
 
 import ReactPaginate from 'react-paginate';
 
@@ -10,15 +11,9 @@ import { LoaderContext } from '@/contexts/loaderContext';
 
 
 function SearchPage() {
-	const { publicRuntimeConfig } = getConfig();
-	const apiHost = publicRuntimeConfig.apiHost;
-	const perPage = publicRuntimeConfig.perPage;
-	
 	const router = useRouter();
-	const [text, setText] = useState(router.query.text);
-	
-	const { loading, setLoading } = useContext(LoaderContext);
-	
+	const { text } = router.query;
+
 	const [results, setResults] = useState([]);
 	
 	const [page, setPage] = useState(1);
@@ -26,42 +21,49 @@ function SearchPage() {
 	const handlePageChange = (e) => {
 		setPage(e.selected + 1);
 	};
+
+	const { setLoading } = useContext(LoaderContext);
 	
-	const getData = async () => {
-		setLoading(true);
-		
-		try {
-			const response = await fetch(
-				`${apiHost}/search?query=${text}&page=${page}&per_page=${perPage}`,
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				}
-			).then((response) => response.json());
-
-			const links = response.map((item) => {
-				return item[0];
-			});
-
-			console.log(links);
-			setResults(links);
-		} catch (error) {
-			console.log(error);
-			setResults([]);
-		}
-
-		setLoading(false);
-	};
-
 	useEffect(() => {
-		getData();
-	}, [page, text]);
+		const getData = async () => {
+			setLoading(true);
+			
+			try {
+				const { publicRuntimeConfig } = getConfig();
+				const apiHost = publicRuntimeConfig.apiHost;
+				const perPage = publicRuntimeConfig.perPage;
+
+				const response = await fetch(
+					`${apiHost}/search?query=${text}&page=${page}&per_page=${perPage}`,
+					{
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					}
+				).then((response) => response.json());
+
+				const links = response.map((item) => {
+					return item[0];
+				});
+
+				setResults(links);
+			} catch (error) {
+				console.log(error);
+				setResults([]);
+			}
+
+			setLoading(false);
+		};
+		if (text) {
+			getData();
+		}
+	}, [page, text, setLoading]);
 
 	return (
 		<>
 			<div className="py-20 px-10 xl:px-72">
+				<Link href="/"><h1>Andromeda</h1></Link>
 				<SearchBar />
 				<hr className="mt-4" />
 				<div className="">

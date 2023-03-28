@@ -10,20 +10,14 @@ export default function SearchBar() {
 
 	const router = useRouter();
 
-	const handleChange = (event) => {
-		console.log(searchText);
-		setSearchText(event.target.value);
+	const handleChange = (e) => {
+		setSearchText(e.target.value);
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		if (router.pathname == '/search') {
-			router.reload({ pathname: '/search', query: { text: searchText} });
-		}
-		else {
-			router.push({ pathname: '/search', query: { text: searchText} });
-		}
+		router.push({ pathname: '/search', query: { text: searchText} });
 	};
 
 	return (
@@ -35,6 +29,7 @@ export default function SearchBar() {
 						className="relative flex-auto bg-transparent bg-clip-padding py-2 text-base font-normal text-white outline-none focus:outline-none"
 						placeholder="Search"
 						onChange={handleChange}
+						defaultValue={router.query.text}
 					/>
 					<button
 						type="submit"

@@ -34,37 +34,37 @@ const truncate = (str, n) => {
 };
 
 export default function Result({ link }) {
-	const { publicRuntimeConfig } = getConfig();
-	const apiHost = publicRuntimeConfig.apiHost;
-
 	const [data, setData] = useState({});
-
+	
 	const [loading, setLoading] = useState(false);
-
-	const getMetaData = async () => {
-		try {
-			setLoading(true);
-
-			let response = await fetch(`${apiHost}/metadata?url=${link}`, {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-			response = await response.json();
-
-			setData(response);
-		}
-		catch (error) {
-			console.log(error);
-		}
-
-		setLoading(false);
-	};
-
+	
 	useEffect(() => {
+		const getMetaData = async () => {
+			try {
+				setLoading(true);
+
+				const { publicRuntimeConfig } = getConfig();
+				const apiHost = publicRuntimeConfig.apiHost;
+	
+				let response = await fetch(`${apiHost}/metadata?url=${link}`, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				});
+				response = await response.json();
+	
+				setData(response);
+			}
+			catch (error) {
+				console.log(error);
+			}
+	
+			setLoading(false);
+		};
+
 		getMetaData();
-	}, []);
+	}, [link]);
 
 	return (
 		<>
