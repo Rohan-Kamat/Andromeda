@@ -1,4 +1,4 @@
-[![Pylint](https://github.com/Rohan-Kamat/Andromeda/actions/workflows/pylint.yml/badge.svg)](https://github.com/Rohan-Kamat/Andromeda/actions/workflows/pylint.yml)
+[![pylint](https://github.com/Rohan-Kamat/Andromeda/actions/workflows/pylint.yml/badge.svg)](https://github.com/Rohan-Kamat/Andromeda/actions/workflows/pylint.yml)
 
 # Andromeda
 Building a search engine from scratch. We plan on implementing the 3 major components in a search engine - `Crawler`, `Parser` and `Indexing`. We will begin by developing command line tools for these components and then wrapping these with an API service to be used by a frontend. This project is being done under IEEE-NITK.
