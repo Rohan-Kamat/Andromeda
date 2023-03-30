@@ -59,8 +59,8 @@ const ResultRender = ({ data, link }) => {
 				</div>
 			</div>
 		</>
-	)
-}
+	);
+};
 
 const truncate = (str, n) => {
 	if (str == null) {
