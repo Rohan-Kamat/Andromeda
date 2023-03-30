@@ -26,7 +26,7 @@ export default function SearchBar() {
 				<div className="flex flex-row rounded-full border border-solid border-white items-center px-10 w-72 md:w-96 gap-2">
 					<input
 						type="search"
-						className="relative flex-auto bg-transparent bg-clip-padding py-2 text-base font-normal text-white outline-none focus:outline-none"
+						className="w-full bg-transparent bg-clip-padding py-2 text-base font-normal text-white outline-none focus:outline-none"
 						placeholder="Search"
 						onChange={handleChange}
 						defaultValue={router.query.text}
