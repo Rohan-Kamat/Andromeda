@@ -6,7 +6,8 @@ const nextConfig = {
     perPage: 10,
   },
   images: {
-    domains: ['www.google.com']
+    domains: ['www.google.com'],
+    unoptimized: true,
   }
 }
 
